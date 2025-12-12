@@ -3,7 +3,7 @@ import { Link, NavLink } from "react-router-dom";
 const Navbar = () => {
   return (
     <div className="fixed top-0 left-0 w-full z-50 bg-[#1B3C73] shadow-[0_2px_6px_rgba(0,0,0,0.15)]">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
         <Link to="/" className="flex items-center gap-2">
           <img src="/logo.png" className="w-8" />
           <span className="text-xl font-bold text-white">SCHOLARSTREAM</span>

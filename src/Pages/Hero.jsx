@@ -1,15 +1,15 @@
 const Hero = () => {
     return (
-        <section className="bg-gradient-to-b from-[#14356A] via-[#1B3C73] to-[#23467C] text-white">
-            <div className="max-w-7xl mx-auto flex flex-col gap-10 px-4 py-14 sm:py-20 md:py-28 lg:flex-row lg:items-center lg:gap-16">
-                <div className="flex-1">
+        <section className="bg-gradient-to-b from-[#1B3C73] to-[#23467C] text-white">
+            <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-14 sm:py-20 md:flex-row md:items-center md:justify-between md:py-24 md:gap-12 lg:gap-16">
+                <div className="w-full md:max-w-md lg:max-w-xl">
                     <p className="font-semibold uppercase tracking-[0.3em] text-sm text-slate-200">
                         Scholarships made simple
                     </p>
-                    <h1 className="mt-4 text-2xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
+                    <h1 className="mt-4 text-3xl font-bold leading-tight text-white sm:text-4xl md:text-5xl lg:text-6xl">
                         Find the Right Scholarship for Your Future
                     </h1>
-                    <p className="mt-5 text-sm text-slate-100 sm:text-xl lg:max-w-xl">
+                    <p className="mt-5 text-sm text-slate-100 sm:text-lg md:text-xl lg:max-w-xl">
                         Discover opportunities, apply with confidence, track your progress— all in one place.
                     </p>
 
@@ -45,8 +45,8 @@ const Hero = () => {
                     </div>
                 </div>
 
-                <div className="flex-1">
-                    <div className="relative mx-auto aspect-square max-w-[180px] sm:max-w-sm">
+                <div className="hidden w-full justify-center md:flex md:w-1/2 md:justify-end">
+                    <div className="relative aspect-square max-w-[210px] lg:max-w-sm">
                         <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/10 to-transparent" />
                         <div className="absolute inset-4 rounded-full border border-white/20" />
                         <div className="relative h-full w-full overflow-hidden rounded-full border-4 border-white/40 shadow-2xl shadow-black/30">
