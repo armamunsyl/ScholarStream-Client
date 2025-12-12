@@ -1,15 +1,41 @@
+import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 
 const Navbar = () => {
-  return (
-    <div className="fixed top-0 left-0 w-full z-50 bg-[#1B3C73] shadow-[0_2px_6px_rgba(0,0,0,0.15)]">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <Link to="/" className="flex items-center gap-2">
-          <img src="/logo.png" className="w-8" />
-          <span className="text-xl font-bold text-white">SCHOLARSTREAM</span>
-        </Link>
+  const [menuOpen, setMenuOpen] = useState(false);
 
-        <ul className="hidden md:flex items-center gap-8 text-white/90 font-medium">
+  return (
+    <div className="fixed top-0 left-0 z-50 w-full bg-[#1B3C73] shadow-[0_2px_6px_rgba(0,0,0,0.15)]">
+      <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 md:justify-between">
+        <div className="flex flex-1 items-center gap-3 md:w-auto md:flex-none md:gap-6">
+          <Link to="/" className="flex shrink-0 items-center gap-2">
+            <img src="/logo1.png" className="w-8" />
+            <span className="hidden text-xs font-bold text-white sm:inline-block lg:text-xl">SCHOLARSTREAM</span>
+          </Link>
+
+          <div className="flex min-w-0 flex-1 items-center gap-2 rounded-full bg-white/10 px-3 py-2 text-white md:hidden">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4 text-white/70"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              type="text"
+              placeholder="Search scholarships"
+              className="min-w-0 flex-1 bg-transparent text-sm text-white placeholder:text-white/70 outline-none"
+            />
+          </div>
+        </div>
+
+        <ul className="hidden items-center gap-8 font-medium text-white/90 md:flex">
           <li>
             <NavLink to="/" className={({ isActive }) =>
               isActive ? "text-white" : ""}>
@@ -39,13 +65,67 @@ const Navbar = () => {
           </li>
         </ul>
 
-        <Link
-          to="/login"
-          className="px-4 py-2 bg-[#23467C] hover:bg-[#2d4f88] text-white rounded-md"
-        >
-          Log In
-        </Link>
+        <div className="flex items-center gap-3 md:w-auto">
+          <Link
+            to="/login"
+            className="hidden rounded-md bg-[#23467C] px-4 py-2 text-white hover:bg-[#2d4f88] md:inline-block"
+          >
+            Log In
+          </Link>
+          <button
+            className="shrink-0 rounded-full border border-white/30 p-2 text-white md:hidden"
+            aria-label="Open navigation menu"
+            onClick={() => setMenuOpen((prev) => !prev)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-5 w-5"
+            >
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+        </div>
       </div>
+      {menuOpen && (
+        <div className="md:hidden border-t border-white/15 bg-[#152f5d]/95 backdrop-blur">
+          <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 text-white">
+            <nav className="flex flex-col gap-3 text-sm font-medium">
+              {[
+                { to: '/', label: 'Home' },
+                { to: '/scholarships', label: 'All Scholarships' },
+                { to: '/success-stories', label: 'Success Stories' },
+                { to: '/faq', label: 'FAQ' }
+              ].map((link) => (
+                <NavLink
+                  key={link.to}
+                  to={link.to}
+                  onClick={() => setMenuOpen(false)}
+                  className={({ isActive }) =>
+                    `rounded-full px-4 py-2 ${isActive ? 'bg-white/15 text-white' : 'text-white/80'}`
+                  }
+                >
+                  {link.label}
+                </NavLink>
+              ))}
+            </nav>
+            <Link
+              to="/login"
+              onClick={() => setMenuOpen(false)}
+              className="rounded-full bg-[#23467C] px-4 py-2 text-center text-sm font-semibold text-white"
+            >
+              Log In
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
