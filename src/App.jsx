@@ -1,9 +1,11 @@
+import Navbar from "./components/Navbar"
 
 
 function App() {
 
   return (
    <div className="navbar bg-base-100 shadow-sm">
+    {/* <Navbar></Navbar> */}
   <div className="flex-1">
     <a className="btn btn-ghost text-xl">daisyUI</a>
   </div>
