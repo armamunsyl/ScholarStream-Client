@@ -61,18 +61,18 @@ const Popular = () => {
     return (
         <section className="bg-gradient-to-b from-[#22467c] to-[#23467C] py-20 text-white">
             <div className="mx-auto max-w-6xl px-4">
-                <div className="mb-10">
-                    <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/70">Top Picks</p>
-                    <h2 className="mt-2 text-3xl font-bold sm:text-4xl">Top Scholarships</h2>
+                <div className="mb-8">
+                    <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/70 sm:text-sm">Top Picks</p>
+                    <h2 className="mt-2 text-2xl font-bold sm:text-4xl">Top Scholarships</h2>
                 </div>
 
-                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-2 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {scholarships.map((college) => (
                         <article
                             key={college.id}
                             className="flex h-full flex-col overflow-hidden rounded-3xl bg-white text-slate-900 shadow-lg shadow-black/20"
                         >
-                            <div className="relative h-48 w-full">
+                            <div className="relative h-32 w-full sm:h-40 lg:h-48">
                                 <img
                                     src={college.image}
                                     alt={college.name}
@@ -81,7 +81,7 @@ const Popular = () => {
                                 />
                             </div>
                             <div className="flex flex-1 flex-col p-6">
-                                <div className="flex items-center gap-2 text-lg font-semibold text-slate-900">
+                                <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 sm:text-lg">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 24 24"
@@ -96,12 +96,12 @@ const Popular = () => {
                                         <path d="M5 10v6.5a8 8 0 0 0 14 0V10" />
                                         <path d="M12 12v9" />
                                     </svg>
-                                    <h3>{college.name}</h3>
+                                    <h3 className="leading-tight">{college.name}</h3>
                                 </div>
-                                <span className="mt-3 inline-flex items-center rounded-full border border-[#D6E8FF] px-4 py-1 text-xs font-semibold text-[#1C4E94]">
+                                <span className="mt-3 inline-flex items-center rounded-full border border-[#D6E8FF] px-3 py-1 text-[9px] font-semibold text-[#1C4E94] sm:px-4 sm:text-xs">
                                     {college.fundingType}
                                 </span>
-                                <ul className="mt-4 space-y-2 text-sm text-slate-600">
+                                <ul className="mt-3 space-y-2 text-[11px] text-slate-600 sm:text-sm">
                                     <li className="flex items-center gap-2">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -138,9 +138,9 @@ const Popular = () => {
                                     </li>
                                 </ul>
 
-                                <div className="mt-auto flex items-center justify-between pt-6">
-                                    <span className="text-2xl font-bold text-slate-900">{college.amount}</span>
-                                    <button className="rounded-full bg-[#234DCC] px-5 py-2 text-sm font-semibold text-white transition hover:bg-[#1b3ba0]">
+                                <div className="mt-auto flex flex-wrap items-center gap-2 pt-4 sm:flex-nowrap sm:justify-between">
+                                    <span className="text-lg font-bold text-slate-900 sm:text-2xl">{college.amount}</span>
+                                    <button className="flex-1 rounded-full bg-[#234DCC] px-2.5 py-1 text-[8px] font-semibold text-white transition hover:bg-[#1b3ba0] sm:flex-none sm:px-5 sm:py-2 sm:text-sm">
                                         View Details
                                     </button>
                                 </div>
