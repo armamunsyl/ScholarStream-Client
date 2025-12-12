@@ -7,15 +7,18 @@ import Footer from '../components/Footer';
 import MobileNav from '../components/MobileNav';
 
 const Layout = () => {
-  return (
-    <div className='max-w-11/12 mx-auto pb-24 md:pb-0'>
-        <Navbar></Navbar>
-        <Outlet></Outlet>
-        <MobileNav></MobileNav>
-        <Footer></Footer>
-        <ToastContainer position="top-center" />
-    </div>
-  )
+    return (
+        <div className='max-w-11/12 mx-auto pb-24 md:pb-0'>
+            <Navbar></Navbar>
+            <div className='pt-6'>
+                <Outlet></Outlet>
+            </div>
+
+            <MobileNav></MobileNav>
+            <Footer></Footer>
+            <ToastContainer position="top-center" />
+        </div>
+    )
 }
 
 export default Layout
