@@ -8,17 +8,16 @@ import MobileNav from '../components/MobileNav';
 
 const Layout = () => {
     return (
-        <div className='max-w-11/12 mx-auto pb-24 md:pb-0'>
-            <Navbar></Navbar>
-            <div className='pt-6'>
-                <Outlet></Outlet>
-            </div>
-
-            <MobileNav></MobileNav>
-            <Footer></Footer>
+        <div className="max-w-11/12 mx-auto">
+            <Navbar />
+            <main className="pt-6 pb-24 md:pb-0">
+                <Outlet />
+            </main>
+            <Footer />
+            <MobileNav />
             <ToastContainer position="top-center" />
         </div>
-    )
-}
+    );
+};
 
-export default Layout
+export default Layout;

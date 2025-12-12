@@ -4,6 +4,7 @@ import Home from "../Pages/Home";
 import ErrorPage from "../Pages/ErrorPage";
 import Login from "../components/Login";
 import Register from "../components/Register";
+import Scholarships from "../Pages/Scholarships";
 
 const router = createBrowserRouter ([
     {
@@ -24,8 +25,15 @@ const router = createBrowserRouter ([
                 path: "/register",
                 Component: Register,
 
+            },
+            {
+                path: "/scholarships",
+                Component: Scholarships,
+
             }
         ]
     }
 ]);
 export default router;
+
+//scholarships

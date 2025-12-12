@@ -1,8 +1,20 @@
+import { motion } from 'framer-motion';
+
 const Login = () => {
     return (
-        <section className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[#1B3C73] to-[#23467C] px-4 py-8">
+        <motion.section
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="flex min-h-screen items-center justify-center bg-gradient-to-b from-[#1B3C73] to-[#23467C] px-4 py-8"
+        >
             <div className="w-full max-w-xs sm:max-w-sm">
-                <div className="overflow-hidden rounded-[22px] bg-white shadow-2xl shadow-black/20">
+                <motion.div
+                    initial={{ scale: 0.95, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                    className="overflow-hidden rounded-[22px] bg-white shadow-2xl shadow-black/20"
+                >
                     <div className="relative overflow-hidden bg-[#1B3C73] px-5 py-3 text-center text-white">
                         <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent" />
                         <div className="relative flex flex-col items-center gap-1.5">
@@ -66,9 +78,9 @@ const Login = () => {
                             </a>
                         </p>
                     </div>
-                </div>
+                </motion.div>
             </div>
-        </section>
+        </motion.section>
     );
 };
 

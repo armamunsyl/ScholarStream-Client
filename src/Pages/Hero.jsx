@@ -1,8 +1,20 @@
+import { motion } from 'framer-motion';
+
 const Hero = () => {
+    const fadeInUp = {
+        hidden: { opacity: 0, y: 30 },
+        visible: { opacity: 1, y: 0 }
+    };
+
     return (
-        <section className="bg-gradient-to-b from-[#1B3C73] to-[#23467C] text-white">
+        <motion.section
+            initial="hidden"
+            animate="visible"
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="bg-gradient-to-b from-[#1B3C73] to-[#23467C] text-white"
+        >
             <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-14 sm:py-20 md:flex-row md:items-center md:justify-between md:py-24 md:gap-12 lg:gap-16">
-                <div className="w-full md:max-w-md lg:max-w-xl">
+                <motion.div className="w-full md:max-w-md lg:max-w-xl" variants={fadeInUp}>
                     <p className="font-semibold uppercase tracking-[0.3em] text-sm text-slate-200">
                         Scholarships made simple
                     </p>
@@ -43,9 +55,13 @@ const Hero = () => {
                             Browse Scholarships
                         </button>
                     </div>
-                </div>
+                </motion.div>
 
-                <div className="hidden w-full justify-center md:flex md:w-1/2 md:justify-end">
+                <motion.div
+                    className="hidden w-full justify-center md:flex md:w-1/2 md:justify-end"
+                    variants={fadeInUp}
+                    transition={{ delay: 0.2 }}
+                >
                     <div className="relative aspect-square max-w-[210px] lg:max-w-sm">
                         <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/10 to-transparent" />
                         <div className="absolute inset-4 rounded-full border border-white/20" />
@@ -58,9 +74,9 @@ const Hero = () => {
                             />
                         </div>
                     </div>
-                </div>
+                </motion.div>
             </div>
-        </section>
+        </motion.section>
     );
 };
 

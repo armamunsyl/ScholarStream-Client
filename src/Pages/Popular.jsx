@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 const scholarships = [
     {
@@ -59,7 +60,13 @@ const scholarships = [
 
 const Popular = () => {
     return (
-        <section className="bg-gradient-to-b from-[#22467c] to-[#23467C] py-20 text-white">
+        <motion.section
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7 }}
+            className="bg-gradient-to-b from-[#22467c] to-[#23467C] py-20 text-white"
+        >
             <div className="mx-auto max-w-6xl px-4">
                 <div className="mb-8">
                     <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/70 sm:text-sm">Top Picks</p>
@@ -68,8 +75,13 @@ const Popular = () => {
 
                 <div className="grid grid-cols-2 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {scholarships.map((college) => (
-                        <article
+                        <motion.article
                             key={college.id}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: college.id * 0.05 }}
+                            whileHover={{ translateY: -6, boxShadow: '0 20px 30px rgba(0,0,0,0.2)' }}
                             className="flex h-full flex-col overflow-hidden rounded-3xl bg-white text-slate-900 shadow-lg shadow-black/20"
                         >
                             <div className="relative h-32 w-full sm:h-40 lg:h-48">
@@ -145,11 +157,11 @@ const Popular = () => {
                                     </button>
                                 </div>
                             </div>
-                        </article>
+                        </motion.article>
                     ))}
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 };
 

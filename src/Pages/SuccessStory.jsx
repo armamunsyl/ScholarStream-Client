@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 const stories = [
     {
@@ -26,13 +27,24 @@ const stories = [
 
 const SuccessStory = () => {
     return (
-        <section className="bg-white py-16">
+        <motion.section
+            initial={{ opacity: 0, y: 50 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.7 }}
+            className="bg-white py-16"
+        >
             <div className="mx-auto max-w-6xl px-4">
                 <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">Success Stories</h2>
                 <div className="mt-10 grid gap-6 md:grid-cols-3">
                     {stories.map((story) => (
-                        <article
+                        <motion.article
                             key={story.id}
+                            initial={{ opacity: 0, y: 30 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.5, delay: story.id * 0.05 }}
+                            whileHover={{ translateY: -6, boxShadow: '0 20px 35px rgba(15,23,42,0.15)' }}
                             className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                         >
                             <div className="flex items-center gap-4">
@@ -56,11 +68,11 @@ const SuccessStory = () => {
                                     </svg>
                                 ))}
                             </div>
-                        </article>
+                        </motion.article>
                     ))}
                 </div>
             </div>
-        </section>
+        </motion.section>
     );
 };
 
