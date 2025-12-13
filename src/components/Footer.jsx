@@ -8,7 +8,7 @@ const Footer = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.6 }}
-            className="mt-24 bg-gradient-to-b from-[#122C5A] to-[#091A37] text-white"
+            className="mt-0 bg-gradient-to-b from-[#122C5A] to-[#091A37] text-white"
         >
             <div className="mx-auto max-w-6xl px-4 py-12">
                 <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">

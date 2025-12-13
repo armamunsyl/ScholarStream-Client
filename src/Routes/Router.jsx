@@ -5,6 +5,7 @@ import ErrorPage from "../Pages/ErrorPage";
 import Login from "../components/Login";
 import Register from "../components/Register";
 import Scholarships from "../Pages/Scholarships";
+import Faq from "../Pages/Faq";
 
 const router = createBrowserRouter ([
     {
@@ -29,6 +30,11 @@ const router = createBrowserRouter ([
             {
                 path: "/scholarships",
                 Component: Scholarships,
+
+            },
+            {
+                path: "/faq",
+                Component: Faq,
 
             }
         ]
