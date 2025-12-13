@@ -6,6 +6,7 @@ import Login from "../components/Login";
 import Register from "../components/Register";
 import Scholarships from "../Pages/Scholarships";
 import Faq from "../Pages/Faq";
+import ScholarshipDetails from "../Pages/ScholarshipDetails";
 
 const router = createBrowserRouter ([
     {
@@ -36,10 +37,15 @@ const router = createBrowserRouter ([
                 path: "/faq",
                 Component: Faq,
 
+            },
+            {
+                path: "/scholarship-details/:id",
+                Component: ScholarshipDetails,
+
             }
         ]
     }
 ]);
 export default router;
 
-//scholarships
+//scholarship-details

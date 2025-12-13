@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const scholarshipsData = [
     {
@@ -438,9 +439,11 @@ const Scholarships = () => {
                                             {item.fee}
                                         </span>
                                     </div>
+                                    <Link to={"/scholarship-details/1"}>
                                     <button className="w-full rounded-full bg-[#234DCC] px-3 py-1 text-[10px] font-semibold text-white transition hover:bg-[#1b3ba0] sm:w-auto sm:rounded-xl sm:px-4 sm:py-2 sm:text-sm">
                                         View Details
                                     </button>
+                                    </Link>
                                 </div>
                             </div>
                         </motion.article>

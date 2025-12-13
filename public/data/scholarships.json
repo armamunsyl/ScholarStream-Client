@@ -1,0 +1,108 @@
+[
+  {
+    "id": 1,
+    "title": "University of Chicago",
+    "location": "Chicago, United States",
+    "coverImage": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1200&q=80",
+    "tags": ["Full-Funding", "Merit-based"],
+    "deadline": "Dec 31, 2024",
+    "applicationFee": 0,
+    "tuition": "$0",
+    "overview": "The University of Chicago offers a merit-based scholarship providing full funding to outstanding international students pursuing undergraduate degrees. This opportunity covers tuition, living expenses, and other associated costs.",
+    "degreeDetails": {
+      "level": "Bachelor",
+      "studyMode": "Full-time",
+      "fundingType": "Merit-based",
+      "location": "United States",
+      "duration": "4 Years",
+      "deadline": "Dec 31, 2024"
+    },
+    "documents": [
+      "Academic Transcript",
+      "Recommendation Letter",
+      "Statement of Purpose",
+      "Passport or National ID",
+      "English Test Score"
+    ],
+    "requirements": [
+      "Must be enrolled in a relevant academic program",
+      "Minimum GPA of 3.5 on a 4.0 scale",
+      "Proof of English proficiency",
+      "CV, SOP, and transcripts"
+    ],
+    "university": {
+      "name": "University of Chicago",
+      "rank": "#10 in the world",
+      "about": "Founded in 1890, the University of Chicago is known for rigorous academics, distinguished faculty, and a strong commitment to innovation.",
+      "logo": "https://upload.wikimedia.org/wikipedia/commons/5/5d/University_of_Chicago_shield.svg",
+      "website": "https://www.uchicago.edu"
+    },
+    "testimonials": [
+      {
+        "id": "tm-1",
+        "name": "Rachel Brown",
+        "country": "Germany",
+        "rating": 5,
+        "quote": "An excellent opportunity with comprehensive support for international students.",
+        "avatar": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=200&q=80"
+      },
+      {
+        "id": "tm-2",
+        "name": "Emma Wilson",
+        "country": "Canada",
+        "rating": 4,
+        "quote": "Great financial support, though the application process was quite competitive.",
+        "avatar": "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=200&q=80"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Oxford Global Scholars",
+    "location": "Oxford, United Kingdom",
+    "coverImage": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+    "tags": ["Partial-Funding", "Need-based"],
+    "deadline": "Jan 15, 2025",
+    "applicationFee": 50,
+    "tuition": "$2,500",
+    "overview": "Oxford Global Scholars supports master's students who demonstrate financial need and academic excellence. Recipients receive tuition coverage and research stipends.",
+    "degreeDetails": {
+      "level": "Masters",
+      "studyMode": "Full-time",
+      "fundingType": "Need-based",
+      "location": "United Kingdom",
+      "duration": "2 Years",
+      "deadline": "Jan 15, 2025"
+    },
+    "documents": [
+      "Updated CV",
+      "Research Proposal",
+      "Academic Transcript",
+      "Passport",
+      "English Proficiency Certificate"
+    ],
+    "requirements": [
+      "Minimum GPA of 3.3",
+      "Evidence of financial need",
+      "Two academic references",
+      "Demonstrated research plan"
+    ],
+    "university": {
+      "name": "University of Oxford",
+      "rank": "#2 in the world",
+      "about": "Established in the 12th century, Oxford is renowned for its tutorial system and world-leading research output.",
+      "logo": "https://upload.wikimedia.org/wikipedia/en/d/d3/Shield_of_the_University_of_Oxford.svg",
+      "website": "https://www.ox.ac.uk"
+    },
+    "testimonials": [
+      {
+        "id": "tm-3",
+        "name": "Isabella Chen",
+        "country": "Singapore",
+        "rating": 5,
+        "quote": "The mentorship and funding opened doors to global research collaborations.",
+        "avatar": "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=200&q=80"
+      }
+    ]
+  }
+]
