@@ -1,8 +1,31 @@
-import { useState } from "react";
+import { useContext, useState, useRef, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { AuthContext } from "../Provider/AuthProvider";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const { user, logOut } = useContext(AuthContext);
+  const profileRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    await logOut();
+    setProfileOpen(false);
+  };
+  // console.log(user);
 
   return (
     <div className="fixed top-0 left-0 z-50 w-full bg-[#1B3C73] shadow-[0_2px_6px_rgba(0,0,0,0.15)]">
@@ -66,12 +89,44 @@ const Navbar = () => {
         </ul>
 
         <div className="flex items-center gap-3 md:w-auto">
-          <Link
-            to="/login"
-            className="hidden rounded-md bg-[#23467C] px-4 py-2 text-white hover:bg-[#2d4f88] md:inline-block"
-          >
-            Log In
-          </Link>
+          {user ? (
+            <div className="relative hidden md:block" ref={profileRef}>
+              <button
+                className="flex items-center gap-3 rounded-full border border-white/30 bg-white/10 px-3 py-1.5"
+                onClick={() => setProfileOpen((prev) => !prev)}
+              >
+                <img
+                  src={user.photoURL || 'https://i.ibb.co/s1sDzpT/default-avatar.png'}
+                  alt={user.displayName || 'Profile'}
+                  className="h-8 w-8 rounded-full object-cover"
+                />
+                <span className="text-sm font-medium text-white/90">{user.displayName || 'Profile'}</span>
+              </button>
+              {profileOpen && (
+                <div className="absolute right-0 mt-2 w-40 rounded-2xl bg-white py-2 shadow-lg">
+                  <p className="px-4 py-2 text-xs font-semibold text-slate-500">
+                    Signed in as
+                    <br />
+                    <span className="text-slate-900">{user.email}</span>
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="w-full px-4 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50"
+                  >
+                    Log out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="hidden rounded-md bg-[#23467C] px-4 py-2 text-white hover:bg-[#2d4f88] md:inline-block"
+            >
+              Log In
+            </Link>
+          )}
           <button
             className="shrink-0 rounded-full border border-white/30 p-2 text-white md:hidden"
             aria-label="Open navigation menu"
@@ -116,15 +171,32 @@ const Navbar = () => {
                 </NavLink>
               ))}
             </nav>
-            <Link
-              to="/login"
-              onClick={() => setMenuOpen(false)}
-              className="rounded-full bg-[#23467C] px-4 py-2 text-center text-sm font-semibold text-white"
-            >
-              Log In
-            </Link>
-          </div>
-        </div>
+            {user ? (
+              <div className="flex items-center gap-3 rounded-full border border-white/30 bg-white/10 px-3 py-1.5">
+                <img
+                  src={user.photoURL || 'https://i.ibb.co/s1sDzpT/default-avatar.png'}
+                  alt={user.displayName || 'Profile'}
+                  className="h-9 w-9 rounded-full object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="text-sm font-semibold text-red-200 underline underline-offset-2"
+                >
+                  Log out
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="rounded-full bg-[#23467C] px-4 py-2 text-center text-sm font-semibold text-white"
+              >
+                Log In
+              </Link>
+            )}
+         </div>
+       </div>
       )}
     </div>
   );
