@@ -1,11 +1,19 @@
 import { NavLink } from 'react-router-dom';
 
-const items = [
+const publicItems = [
     { path: '/', label: 'Home', icon: HomeIcon },
     { path: '/scholarships', label: 'Scholarships', icon: BookIcon },
-    { path: '/success-stories', label: 'Stories', icon: StarIcon },
+    { path: '/dashboard', label: 'Dashboard', icon: StarIcon },
     { path: '/faq', label: 'FAQ', icon: HelpIcon },
     { path: '/login', label: 'Account', icon: UserIcon }
+];
+
+const dashboardItems = [
+    { path: '/dashboard', label: 'Overview', icon: HomeIcon },
+    { path: '/dashboard/my-applications', label: 'Applications', icon: BookIcon, roles: ['student'] },
+    { path: '/dashboard/my-reviews', label: 'Reviews', icon: StarIcon, roles: ['student'] },
+    { path: '/dashboard/review-applications', label: 'Review Apps', icon: HelpIcon, roles: ['moderator'] },
+    { path: '/dashboard/manage-users', label: 'Users', icon: UserIcon, roles: ['admin'] },
 ];
 
 function HomeIcon(props) {
@@ -62,7 +70,10 @@ function UserIcon(props) {
     );
 }
 
-const MobileNav = () => {
+const MobileNav = ({ role = 'guest', isDashboard }) => {
+    const items = isDashboard
+        ? dashboardItems.filter((item) => !item.roles || item.roles.includes(role))
+        : publicItems;
     return (
         <nav className="fixed bottom-0 left-0 z-50 w-full border-t border-white/10 bg-[#11264F] px-2 py-2 text-white shadow-[0_-4px_12px_rgba(0,0,0,0.25)] md:hidden">
             <div className="mx-auto flex max-w-6xl items-center justify-between">

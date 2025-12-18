@@ -74,7 +74,7 @@ const Navbar = () => {
           </li>
 
           <li>
-            <NavLink to="/success-stories" className={({ isActive }) =>
+            <NavLink to="/dashboard" className={({ isActive }) =>
               isActive ? "text-white" : ""}>
               Success Stories
             </NavLink>
