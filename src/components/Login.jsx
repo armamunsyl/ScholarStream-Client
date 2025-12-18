@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Provider/AuthProvider';
+import { saveFirebaseCredential } from '../utils/userApi';
 
 const Login = () => {
     const { loginUser, googleLogin, loading: authLoading } = useContext(AuthContext);
@@ -31,7 +32,8 @@ const Login = () => {
         setStatus({ error: '', success: '' });
         setSubmitting(true);
         try {
-            await googleLogin();
+            const credential = await googleLogin();
+            await saveFirebaseCredential(credential);
             setStatus({ error: '', success: 'Logged in with Google.' });
             navigate('/', { replace: true });
         } catch (error) {

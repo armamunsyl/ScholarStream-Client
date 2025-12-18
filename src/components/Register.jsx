@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Provider/AuthProvider';
+import { saveUser, saveFirebaseCredential } from '../utils/userApi';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -21,6 +22,12 @@ const Register = () => {
         try {
             await createUser(formData.email, formData.password);
             await updateUserProfile(formData.name, formData.photoURL);
+            await saveUser({
+                name: formData.name,
+                email: formData.email,
+                photoURL: formData.photoURL,
+                createdAt: new Date().toISOString(),
+            });
             setStatus({ error: '', success: 'Account created successfully!' });
             navigate('/', { replace: true });
         } catch (error) {
@@ -34,7 +41,8 @@ const Register = () => {
         setStatus({ error: '', success: '' });
         setSubmitting(true);
         try {
-            await googleLogin();
+            const credential = await googleLogin();
+            await saveFirebaseCredential(credential);
             setStatus({ error: '', success: 'Signed in with Google.' });
             navigate('/', { replace: true });
         } catch (error) {
