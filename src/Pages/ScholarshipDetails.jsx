@@ -1,6 +1,8 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { apiClient } from '../utils/userApi';
+import { AuthContext } from '../Provider/AuthProvider';
 
 const LocationIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5 text-slate-500">
@@ -25,11 +27,14 @@ const formatCurrency = (value) => {
 const ScholarshipDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation();
-  const initialScholarship = location.state?.scholarship ?? null;
+  const routeLocation = useLocation();
+  const initialScholarship = routeLocation.state?.scholarship ?? null;
+  const { user } = useContext(AuthContext);
   const [scholarship, setScholarship] = useState(initialScholarship);
   const [loading, setLoading] = useState(!initialScholarship);
   const [error, setError] = useState('');
+  const [applying, setApplying] = useState(false);
+  const [applied, setApplied] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
@@ -56,6 +61,28 @@ const ScholarshipDetails = () => {
       isMounted = false;
     };
   }, [id, initialScholarship]);
+
+  const handleApply = async () => {
+    if (!user) {
+      navigate('/login', { state: { from: routeLocation.pathname } });
+      return;
+    }
+    if (!scholarship) return;
+    try {
+      setApplying(true);
+      await apiClient.post('/applications', {
+        studentEmail: user.email,
+        studentName: user.displayName || user.email?.split('@')[0] || 'ScholarStream Student',
+        universityName: scholarship.universityName,
+      });
+      toast.success('Application submitted successfully!');
+      setApplied(true);
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to submit application.');
+    } finally {
+      setApplying(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -156,9 +183,15 @@ const ScholarshipDetails = () => {
               </div>
               <button
                 type="button"
-                className="inline-flex items-center justify-center rounded-full bg-[#0F2C60] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition hover:bg-[#0c224a]"
+                onClick={handleApply}
+                disabled={applied || applying}
+                className={`inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition ${
+                  applied
+                    ? 'bg-emerald-500/80 cursor-not-allowed'
+                    : 'bg-[#0F2C60] hover:bg-[#0c224a] disabled:cursor-not-allowed disabled:opacity-60'
+                }`}
               >
-                Apply Now
+                {applied ? 'Applied' : applying ? 'Applying...' : 'Apply Now'}
               </button>
             </div>
           </div>
