@@ -35,6 +35,7 @@ const ScholarshipDetails = () => {
   const [error, setError] = useState('');
   const [applying, setApplying] = useState(false);
   const [applied, setApplied] = useState(false);
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -62,6 +63,28 @@ const ScholarshipDetails = () => {
     };
   }, [id, initialScholarship]);
 
+  useEffect(() => {
+    let isMounted = true;
+    const loadReviews = async () => {
+      try {
+        const { data } = await apiClient.get('/reviews');
+        if (!isMounted) return;
+        const list = Array.isArray(data) ? data : [];
+        const matched = list
+          .filter((review) => review.scholarshipName === (initialScholarship?.scholarshipName || scholarship?.scholarshipName))
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 3);
+        setReviews(matched);
+      } catch (err) {
+        console.error('Failed to load reviews', err);
+      }
+    };
+    loadReviews();
+    return () => {
+      isMounted = false;
+    };
+  }, [initialScholarship?.scholarshipName, scholarship?.scholarshipName]);
+
   const handleApply = async () => {
     if (!user) {
       navigate('/login', { state: { from: routeLocation.pathname } });
@@ -77,6 +100,8 @@ const ScholarshipDetails = () => {
         universityAddress: [scholarship.city, scholarship.country].filter(Boolean).join(', '),
         scholarshipName: scholarship.scholarshipName,
         applicationFees: scholarship.applicationFees ?? 0,
+        scholarshipId: scholarship._id || scholarship.id || id,
+        dashboardScholarshipId: scholarship._id || scholarship.id || id,
       });
       toast.success('Application submitted successfully!');
       setApplied(true);
@@ -272,6 +297,39 @@ const ScholarshipDetails = () => {
             </div>
           </div>
         </div>
+        {reviews.length > 0 && (
+          <div className="mt-10 space-y-4">
+            <h2 className="text-xl font-semibold text-slate-900">Latest Reviews</h2>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {reviews.map((review) => (
+                <div key={review._id} className="rounded-2xl border border-slate-100 p-4 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 overflow-hidden rounded-full bg-slate-100">
+                      {review.userPhotoURL ? (
+                        <img src={review.userPhotoURL} alt={review.userName} className="h-full w-full object-cover" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-sm font-semibold text-[#1B3C73]">
+                          {(review.userName || 'S')[0]}
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">{review.userName}</p>
+                      <div className="flex items-center gap-1 text-amber-400">
+                        {Array.from({ length: 5 }).map((_, index) => (
+                          <span key={index} className={`text-lg ${index < Number(review.rating || 0) ? 'text-amber-400' : 'text-slate-200'}`}>
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="mt-3 text-sm text-slate-600">{review.comment}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -14,6 +14,8 @@ const StudentApplications = () => {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeApplication, setActiveApplication] = useState(null);
+    const [reviewData, setReviewData] = useState({ rating: 0, comment: '' });
+    const [submittingReview, setSubmittingReview] = useState(false);
 
     useEffect(() => {
         if (role !== 'student' || !authUser?.email) {
@@ -90,8 +92,7 @@ const StudentApplications = () => {
                                 const statusKey = application.status?.toLowerCase?.() || 'pending';
                                 const feeValue = Number(application.applicationFees ?? 0);
                                 const feeDisplay = Number.isNaN(feeValue) || feeValue === 0 ? '—' : `$${feeValue}`;
-                                        console.log(application)
-                                return (
+                                        return (
                                     <tr key={application._id} className="border-t border-slate-100 text-slate-600">
                                         <td className="px-4 py-4 font-semibold text-slate-900">{application.universityName}</td>
                                         <td className="px-4 py-4">{application.scholarshipName || 'N/A'}</td>
@@ -105,7 +106,15 @@ const StudentApplications = () => {
                                         <td className="px-4 py-4">{appliedDate}</td>
                                         <td className="px-4 py-4">
                                             <div className="flex justify-end gap-2 text-xs font-semibold">
-                                                <button className="text-[#1B3C73]" onClick={() => setActiveApplication(application)}>Details</button>
+                                                <button
+                                                    className="text-[#1B3C73]"
+                                                    onClick={() => {
+                                                        setActiveApplication(application);
+                                                        setReviewData({ rating: 0, comment: '' });
+                                                    }}
+                                                >
+                                                    Details
+                                                </button>
                                                 {application.status === 'pending' && <button className="text-emerald-600">Pay</button>}
                                             </div>
                                         </td>
@@ -168,13 +177,89 @@ const StudentApplications = () => {
                                 <span className="font-semibold capitalize text-slate-900">{activeApplication.payment}</span>
                             </div>
                         </div>
+                        {activeApplication.status?.toLowerCase() === 'approved' && (
+                            <div className="border-t border-slate-100 px-6 py-4">
+                                <h4 className="text-base font-semibold text-slate-900">Share your review</h4>
+                                <form
+                                    className="mt-3 space-y-3 text-sm text-slate-600"
+                                    onSubmit={async (event) => {
+                                        event.preventDefault();
+                                        if (reviewData.rating === 0 || !reviewData.comment.trim()) {
+                                            toast.info('Please provide both rating and comment.');
+                                            return;
+                                        }
+                                        try {
+                                            setSubmittingReview(true);
+                                            await apiClient.post('/reviews', {
+                                                userName: authUser?.displayName || authUser?.email || 'ScholarStream User',
+                                                userEmail: authUser?.email || '',
+                                                userPhotoURL: authUser?.photoURL || '',
+                                                comment: reviewData.comment,
+                                                rating: reviewData.rating,
+                                                scholarshipId:
+                                                    activeApplication.scholarshipId ||
+                                                    activeApplication.dashboardScholarshipId ||
+                                                    activeApplication.scholarship_id,
+                                                scholarshipName: activeApplication.scholarshipName || 'Scholarship',
+                                                universityName: activeApplication.universityName || 'University',
+                                            });
+                                            toast.success('Review submitted!');
+                                            setReviewData({ rating: 0, comment: '' });
+                                        } catch (error) {
+                                            toast.error(error?.response?.data?.message || 'Failed to submit review.');
+                                        } finally {
+                                            setSubmittingReview(false);
+                                        }
+                                    }}
+                                >
+                                    <div className="space-y-1">
+                                        <span className="text-xs font-semibold uppercase tracking-wide text-slate-500">Rating</span>
+                                        <div className="flex items-center gap-2">
+                                            {Array.from({ length: 5 }).map((_, index) => {
+                                                const value = index + 1;
+                                                const selected = reviewData.rating >= value;
+                                                return (
+                                                    <button
+                                                        key={value}
+                                                        type="button"
+                                                        onClick={() => setReviewData((prev) => ({ ...prev, rating: value }))}
+                                                        className={`h-8 w-8 rounded-full border text-sm font-semibold ${
+                                                            selected ? 'border-[#F58A4B] bg-[#F58A4B] text-white' : 'border-slate-200 text-slate-500'
+                                                        }`}
+                                                    >
+                                                        {value}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                    <label className="block text-sm font-semibold text-slate-600">
+                                        Comment
+                                        <textarea
+                                            rows={3}
+                                            className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-[#1B3C73] focus:outline-none"
+                                            value={reviewData.comment}
+                                            onChange={(e) => setReviewData((prev) => ({ ...prev, comment: e.target.value }))}
+                                            placeholder="Share your experience..."
+                                        />
+                                    </label>
+                                    <button
+                                        type="submit"
+                                        className="w-full rounded-full bg-[#1B3C73] px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+                                        disabled={submittingReview}
+                                    >
+                                        {submittingReview ? 'Submitting...' : 'Submit Review'}
+                                    </button>
+                                </form>
+                            </div>
+                        )}
                         <div className="flex justify-between border-t border-slate-100 px-6 py-4">
                             <button
                                 type="button"
                                 className="text-sm font-semibold text-slate-500"
                                 onClick={() => setActiveApplication(null)}
                             >
-                                Cancel
+                                Close
                             </button>
                             <button
                                 type="button"
