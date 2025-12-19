@@ -21,7 +21,9 @@ const ModeratorApplications = () => {
                 setLoading(true);
                 const { data } = await apiClient.get('/applications');
                 if (!isMounted) return;
-                setApplications(Array.isArray(data) ? data : []);
+                const list = Array.isArray(data) ? data : [];
+                const pending = list.filter((app) => (app.status || 'pending').toLowerCase() !== 'approved');
+                setApplications(pending);
             } catch (error) {
                 if (isMounted) {
                     toast.error(error?.response?.data?.message || 'Failed to fetch applications.');
@@ -38,6 +40,30 @@ const ModeratorApplications = () => {
             isMounted = false;
         };
     }, [role]);
+
+    const updateStatus = async (applicationId, status) => {
+        try {
+            await apiClient.patch(`/applications/${applicationId}`, { status });
+            toast.success(`Application ${status}.`);
+            setApplications((prev) =>
+                prev
+                    .map((app) => (app._id === applicationId ? { ...app, status } : app))
+                    .filter((app) => (app.status || 'pending').toLowerCase() !== 'approved')
+            );
+        } catch (error) {
+            toast.error(error?.response?.data?.message || 'Failed to update application.');
+        }
+    };
+
+    const deleteApplication = async (applicationId) => {
+        try {
+            await apiClient.delete(`/applications/${applicationId}`);
+            toast.success('Application rejected.');
+            setApplications((prev) => prev.filter((app) => app._id !== applicationId));
+        } catch (error) {
+            toast.error(error?.response?.data?.message || 'Failed to delete application.');
+        }
+    };
 
     if (role !== 'moderator') {
         return <p className="text-sm text-slate-500">Only moderators review applications here.</p>;
@@ -84,8 +110,18 @@ const ModeratorApplications = () => {
                                     <td className="px-4 py-4">
                                         <div className="flex flex-wrap justify-end gap-2 text-xs font-semibold">
                                             <button className="rounded-full border border-slate-200 px-3 py-1 text-[#1B3C73]">Details</button>
-                                            <button className="rounded-full border border-emerald-200 px-3 py-1 text-emerald-600">Approve</button>
-                                            <button className="rounded-full border border-red-200 px-3 py-1 text-red-500">Reject</button>
+                                            <button
+                                                className="rounded-full border border-emerald-200 px-3 py-1 text-emerald-600"
+                                                onClick={() => updateStatus(item._id || item.id, 'approved')}
+                                            >
+                                                Approve
+                                            </button>
+                                            <button
+                                                className="rounded-full border border-red-200 px-3 py-1 text-red-500"
+                                                onClick={() => deleteApplication(item._id || item.id)}
+                                            >
+                                                Reject
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
