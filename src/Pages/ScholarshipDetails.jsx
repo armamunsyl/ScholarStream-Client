@@ -298,7 +298,7 @@ const ScholarshipDetails = () => {
           </div>
         </div>
         {reviews.length > 0 && (
-          <div className="mt-10 space-y-4">
+          <div className="mt-10 space-y-4 mb-10">
             <h2 className="text-xl font-semibold text-slate-900">Latest Reviews</h2>
             <div className="grid gap-4 sm:grid-cols-3">
               {reviews.map((review) => (
