@@ -74,6 +74,9 @@ const ScholarshipDetails = () => {
         studentEmail: user.email,
         studentName: user.displayName || user.email?.split('@')[0] || 'ScholarStream Student',
         universityName: scholarship.universityName,
+        universityAddress: [scholarship.city, scholarship.country].filter(Boolean).join(', '),
+        scholarshipName: scholarship.scholarshipName,
+        applicationFees: scholarship.applicationFees ?? 0,
       });
       toast.success('Application submitted successfully!');
       setApplied(true);
