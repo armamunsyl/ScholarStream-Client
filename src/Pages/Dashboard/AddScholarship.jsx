@@ -1,4 +1,7 @@
 import { useOutletContext } from 'react-router-dom';
+import { useState } from 'react';
+import { apiClient } from '../../utils/userApi';
+import { toast } from 'react-toastify';
 
 const fields = [
     { name: 'scholarshipName', label: 'Scholarship Name', type: 'text' },
@@ -18,6 +21,43 @@ const fields = [
 
 const AddScholarship = () => {
     const { role } = useOutletContext();
+    const [formData, setFormData] = useState(() =>
+        fields.reduce((acc, field) => {
+            acc[field.name] = '';
+            return acc;
+        }, { description: '' })
+    );
+    const [submitting, setSubmitting] = useState(false);
+
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        setFormData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setSubmitting(true);
+        try {
+            await apiClient.post('/scholarships', {
+                ...formData,
+                createdAt: new Date().toISOString(),
+            });
+            toast.success('Scholarship created successfully!');
+            setFormData(
+                fields.reduce(
+                    (acc, field) => {
+                        acc[field.name] = '';
+                        return acc;
+                    },
+                    { description: '' }
+                )
+            );
+        } catch (error) {
+            toast.error(error?.response?.data?.message || 'Failed to create scholarship.');
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     if (role !== 'admin') {
         return <p className="text-sm text-slate-500">Only admins can add scholarships.</p>;
@@ -30,13 +70,15 @@ const AddScholarship = () => {
                 <p className="text-sm text-slate-500">Publish new opportunities to the platform.</p>
             </header>
 
-            <form className="grid gap-4 md:grid-cols-2">
+            <form className="grid gap-4 md:grid-cols-2" onSubmit={handleSubmit} id="add-scholarship-form">
                 {fields.map((field) => (
                     <label key={field.name} className="text-sm font-semibold text-slate-600">
                         {field.label}
                         <input
                             type={field.type}
                             name={field.name}
+                            value={formData[field.name]}
+                            onChange={handleChange}
                             className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-normal text-slate-800 focus:border-[#1B3C73] focus:outline-none"
                             placeholder={`Enter ${field.label.toLowerCase()}`}
                         />
@@ -46,14 +88,22 @@ const AddScholarship = () => {
                     Description
                     <textarea
                         rows={4}
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
                         className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-normal text-slate-800 focus:border-[#1B3C73] focus:outline-none"
                         placeholder="Scholarship overview, eligibility, etc."
                     />
                 </label>
             </form>
             <div className="flex justify-end">
-                <button type="submit" className="rounded-2xl bg-[#1B3C73] px-6 py-2.5 text-sm font-semibold text-white">
-                    Save Scholarship
+                <button
+                    type="submit"
+                    form="add-scholarship-form"
+                    className="rounded-2xl bg-[#1B3C73] px-6 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+                    disabled={submitting}
+                >
+                    {submitting ? 'Saving...' : 'Save Scholarship'}
                 </button>
             </div>
         </section>
