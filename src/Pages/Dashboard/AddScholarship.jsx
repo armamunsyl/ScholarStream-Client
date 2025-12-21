@@ -11,7 +11,6 @@ const fields = [
     { name: 'city', label: 'City', type: 'text' },
     { name: 'worldRank', label: 'World Rank', type: 'number' },
     { name: 'subjectCategory', label: 'Subject Category', type: 'text' },
-    { name: 'scholarshipCategory', label: 'Scholarship Category', type: 'text' },
     { name: 'degree', label: 'Degree', type: 'text' },
     { name: 'tuitionFees', label: 'Tuition Fees', type: 'number' },
     { name: 'applicationFees', label: 'Application Fees', type: 'number' },
@@ -19,14 +18,18 @@ const fields = [
     { name: 'deadline', label: 'Deadline', type: 'date' },
 ];
 
-const AddScholarship = () => {
-    const { role } = useOutletContext();
-    const [formData, setFormData] = useState(() =>
-        fields.reduce((acc, field) => {
+const createInitialState = () =>
+    fields.reduce(
+        (acc, field) => {
             acc[field.name] = '';
             return acc;
-        }, { description: '' })
+        },
+        { description: '', scholarshipCategory: 'Full Fund' }
     );
+
+const AddScholarship = () => {
+    const { role } = useOutletContext();
+    const [formData, setFormData] = useState(() => createInitialState());
     const [submitting, setSubmitting] = useState(false);
 
     const handleChange = (event) => {
@@ -43,15 +46,7 @@ const AddScholarship = () => {
                 createdAt: new Date().toISOString(),
             });
             toast.success('Scholarship created successfully!');
-            setFormData(
-                fields.reduce(
-                    (acc, field) => {
-                        acc[field.name] = '';
-                        return acc;
-                    },
-                    { description: '' }
-                )
-            );
+            setFormData(createInitialState());
         } catch (error) {
             toast.error(error?.response?.data?.message || 'Failed to create scholarship.');
         } finally {
@@ -84,6 +79,18 @@ const AddScholarship = () => {
                         />
                     </label>
                 ))}
+                <label className="text-sm font-semibold text-slate-600">
+                    Scholarship Category
+                    <select
+                        name="scholarshipCategory"
+                        value={formData.scholarshipCategory}
+                        onChange={handleChange}
+                        className="mt-1 w-full rounded-2xl border border-slate-200 px-4 py-2.5 text-sm font-normal text-slate-800 focus:border-[#1B3C73] focus:outline-none"
+                    >
+                        <option value="Full Fund">Full Fund</option>
+                        <option value="Pertial Fund">Pertial Fund</option>
+                    </select>
+                </label>
                 <label className="text-sm font-semibold text-slate-600 md:col-span-2">
                     Description
                     <textarea

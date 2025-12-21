@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { apiClient } from '../utils/userApi';
+import { apiClient, getUserProfile } from '../utils/userApi';
 import { AuthContext } from '../Provider/AuthProvider';
 
 const LocationIcon = () => (
@@ -36,6 +36,17 @@ const ScholarshipDetails = () => {
   const [applying, setApplying] = useState(false);
   const [applied, setApplied] = useState(false);
   const [reviews, setReviews] = useState([]);
+  const [adminEditing, setAdminEditing] = useState(false);
+  const [adminSaving, setAdminSaving] = useState(false);
+  const [adminEditData, setAdminEditData] = useState({
+    scholarshipName: '',
+    universityName: '',
+    scholarshipCategory: '',
+    country: '',
+    tuitionFees: '',
+    status: '',
+  });
+  const [userRole, setUserRole] = useState('');
 
   useEffect(() => {
     let isMounted = true;
@@ -84,6 +95,28 @@ const ScholarshipDetails = () => {
       isMounted = false;
     };
   }, [initialScholarship?.scholarshipName, scholarship?.scholarshipName]);
+
+  useEffect(() => {
+    let isMounted = true;
+    const loadRole = async () => {
+      if (!user?.email) {
+        if (isMounted) setUserRole('');
+        return;
+      }
+      try {
+        const profile = await getUserProfile(user.email);
+        if (isMounted) {
+          setUserRole(profile?.role?.toLowerCase?.() || '');
+        }
+      } catch (err) {
+        if (isMounted) setUserRole('');
+      }
+    };
+    loadRole();
+    return () => {
+      isMounted = false;
+    };
+  }, [user?.email]);
 
   const handleApply = async () => {
     if (!user) {
@@ -184,15 +217,20 @@ const ScholarshipDetails = () => {
               <div className="inline-flex items-center rounded-full border border-slate-200 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
                 Featured Scholarship
               </div>
-              <h1 className="text-3xl font-semibold text-slate-900 md:text-4xl">{scholarshipName}</h1>
-              <p className="text-sm font-semibold text-slate-600">{universityName}</p>
+              <h1 className="text-3xl font-semibold text-slate-900 md:text-4xl">{universityName}</h1>
+              <p className="text-sm font-semibold text-slate-600">{scholarshipName }</p>
               <div className="flex items-center gap-2 text-sm text-slate-500">
                 <LocationIcon />
                 <span>{formattedLocation}</span>
               </div>
               <div className="flex flex-wrap gap-3">
-                {badges.map((badge) => (
-                  <span key={badge} className="rounded-full bg-slate-100 px-4 py-1 text-sm font-medium text-slate-600">
+                {badges.map((badge, index) => (
+                  <span
+                    key={badge}
+                    className={`rounded-full px-4 py-1 text-sm font-medium ${
+                      index === 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-600'
+                    }`}
+                  >
                     {badge}
                   </span>
                 ))}
@@ -209,18 +247,39 @@ const ScholarshipDetails = () => {
                 <p className="text-sm text-slate-500">Tuition / year</p>
                 <p className="text-3xl font-semibold text-slate-900">{formatCurrency(tuitionFees)}</p>
               </div>
-              <button
-                type="button"
-                onClick={handleApply}
-                disabled={applied || applying}
-                className={`inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition ${
-                  applied
-                    ? 'bg-emerald-500/80 cursor-not-allowed'
-                    : 'bg-[#0F2C60] hover:bg-[#0c224a] disabled:cursor-not-allowed disabled:opacity-60'
-                }`}
-              >
-                {applied ? 'Applied' : applying ? 'Applying...' : 'Apply Now'}
-              </button>
+              {userRole === 'admin' ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!scholarship) return;
+                    setAdminEditData({
+                      scholarshipName: scholarship.scholarshipName || '',
+                      universityName: scholarship.universityName || '',
+                      scholarshipCategory: scholarship.scholarshipCategory || '',
+                      country: scholarship.country || '',
+                      tuitionFees: scholarship.tuitionFees || '',
+                      status: scholarship.status || '',
+                    });
+                    setAdminEditing(true);
+                  }}
+                  className="inline-flex items-center justify-center rounded-full bg-[#0F2C60] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition hover:bg-[#0c224a]"
+                >
+                  Edit
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleApply}
+                  disabled={applied || applying}
+                  className={`inline-flex items-center justify-center rounded-full px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition ${
+                    applied
+                      ? 'bg-emerald-500/80 cursor-not-allowed'
+                      : 'bg-[#0F2C60] hover:bg-[#0c224a] disabled:cursor-not-allowed disabled:opacity-60'
+                  }`}
+                >
+                  {applied ? 'Applied' : applying ? 'Applying...' : 'Apply Now'}
+                </button>
+              )}
             </div>
           </div>
 
@@ -331,6 +390,114 @@ const ScholarshipDetails = () => {
           </div>
         )}
       </div>
+      {adminEditing && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+          <div className="w-full max-w-2xl rounded-3xl bg-white p-6 shadow-lg">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <h3 className="text-lg font-semibold text-slate-900">Update Scholarship</h3>
+              <button
+                type="button"
+                className="text-sm font-semibold text-slate-500"
+                onClick={() => setAdminEditing(false)}
+                disabled={adminSaving}
+              >
+                Close
+              </button>
+            </div>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <label className="text-sm text-slate-600">
+                Scholarship Name
+                <input
+                  type="text"
+                  className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-slate-700 focus:border-[#1B3C73] focus:outline-none"
+                  value={adminEditData.scholarshipName}
+                  onChange={(event) => setAdminEditData((prev) => ({ ...prev, scholarshipName: event.target.value }))}
+                />
+              </label>
+              <label className="text-sm text-slate-600">
+                University Name
+                <input
+                  type="text"
+                  className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-slate-700 focus:border-[#1B3C73] focus:outline-none"
+                  value={adminEditData.universityName}
+                  onChange={(event) => setAdminEditData((prev) => ({ ...prev, universityName: event.target.value }))}
+                />
+              </label>
+              <label className="text-sm text-slate-600">
+                Category
+                <input
+                  type="text"
+                  className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-slate-700 focus:border-[#1B3C73] focus:outline-none"
+                  value={adminEditData.scholarshipCategory}
+                  onChange={(event) => setAdminEditData((prev) => ({ ...prev, scholarshipCategory: event.target.value }))}
+                />
+              </label>
+              <label className="text-sm text-slate-600">
+                Country
+                <input
+                  type="text"
+                  className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-slate-700 focus:border-[#1B3C73] focus:outline-none"
+                  value={adminEditData.country}
+                  onChange={(event) => setAdminEditData((prev) => ({ ...prev, country: event.target.value }))}
+                />
+              </label>
+              <label className="text-sm text-slate-600">
+                Tuition Fees
+                <input
+                  type="number"
+                  className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-slate-700 focus:border-[#1B3C73] focus:outline-none"
+                  value={adminEditData.tuitionFees}
+                  onChange={(event) => setAdminEditData((prev) => ({ ...prev, tuitionFees: event.target.value }))}
+                />
+              </label>
+              <label className="text-sm text-slate-600">
+                Status
+                <select
+                  className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 capitalize text-slate-700 focus:border-[#1B3C73] focus:outline-none"
+                  value={adminEditData.status}
+                  onChange={(event) => setAdminEditData((prev) => ({ ...prev, status: event.target.value }))}
+                >
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="draft">Draft</option>
+                </select>
+              </label>
+            </div>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                className="rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold text-slate-600"
+                onClick={() => setAdminEditing(false)}
+                disabled={adminSaving}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="rounded-full bg-[#1B3C73] px-5 py-2 text-sm font-semibold text-white disabled:opacity-70"
+                onClick={async () => {
+                  if (!scholarship?._id && !scholarship?.id) return;
+                  try {
+                    setAdminSaving(true);
+                    const targetId = (scholarship._id || scholarship.id || '').toString();
+                    await apiClient.patch(`/scholarships/${targetId}`, adminEditData);
+                    setScholarship((prev) => (prev ? { ...prev, ...adminEditData } : prev));
+                    toast.success('Scholarship updated successfully.');
+                    setAdminEditing(false);
+                  } catch (err) {
+                    toast.error(err?.response?.data?.message || 'Failed to update scholarship.');
+                  } finally {
+                    setAdminSaving(false);
+                  }
+                }}
+                disabled={adminSaving}
+              >
+                {adminSaving ? 'Saving...' : 'Save Changes'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
