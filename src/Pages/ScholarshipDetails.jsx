@@ -266,6 +266,14 @@ const ScholarshipDetails = () => {
                 >
                   Edit
                 </button>
+              ) : userRole === 'moderator' ? (
+                <button
+                  type="button"
+                  onClick={() => navigate('/dashboard/review-applications')}
+                  className="inline-flex items-center justify-center rounded-full bg-[#0F2C60] px-5 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-900/10 transition hover:bg-[#0c224a]"
+                >
+                  See Applied
+                </button>
               ) : (
                 <button
                   type="button"
