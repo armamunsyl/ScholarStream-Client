@@ -7,6 +7,7 @@ const ManageUsers = () => {
     const { role } = useOutletContext();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [updatingUserId, setUpdatingUserId] = useState('');
 
     useEffect(() => {
         if (role !== 'admin') return;
@@ -73,9 +74,34 @@ const ManageUsers = () => {
                                         </span>
                                     </td>
                                     <td className="px-4 py-4 text-right">
-                                        <button className="rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600">
-                                            {user.role}
-                                        </button>
+                                        <select
+                                            className="rounded-2xl border border-slate-200 px-3 py-1 text-xs font-semibold capitalize text-slate-600 focus:border-[#1B3C73] focus:outline-none"
+                                            value={user.role}
+                                            disabled={updatingUserId === (user._id || user.id)}
+                                            onChange={async (event) => {
+                                                const newRole = event.target.value;
+                                                const userId = user._id || user.id;
+                                                if (!userId || newRole === user.role) return;
+                                                try {
+                                                    setUpdatingUserId(userId);
+                                                    await apiClient.patch(`/users/${userId}/role`, { role: newRole });
+                                                    setUsers((prev) =>
+                                                        prev.map((item) =>
+                                                            (item._id || item.id) === userId ? { ...item, role: newRole } : item
+                                                        )
+                                                    );
+                                                    toast.success(`${user.name || user.email} is now ${newRole}.`);
+                                                } catch (error) {
+                                                    toast.error(error?.response?.data?.message || 'Failed to update user role.');
+                                                } finally {
+                                                    setUpdatingUserId('');
+                                                }
+                                            }}
+                                        >
+                                            <option value="admin">admin</option>
+                                            <option value="moderator">moderator</option>
+                                            <option value="student">student</option>
+                                        </select>
                                         <button className="ml-4 text-xs font-semibold text-red-500">Delete</button>
                                     </td>
                                 </tr>
