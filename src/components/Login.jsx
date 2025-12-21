@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Provider/AuthProvider';
-import { saveFirebaseCredential } from '../utils/userApi';
+import { saveFirebaseCredential, storeJwtToken } from '../utils/userApi';
 
 const Login = () => {
     const { loginUser, googleLogin, loading: authLoading } = useContext(AuthContext);
@@ -19,6 +19,7 @@ const Login = () => {
         setSubmitting(true);
         try {
             await loginUser(formData.email, formData.password);
+            await storeJwtToken(formData.email);
             setStatus({ error: '', success: 'Logged in successfully!' });
             navigate('/', { replace: true });
         } catch (error) {
@@ -34,6 +35,7 @@ const Login = () => {
         try {
             const credential = await googleLogin();
             await saveFirebaseCredential(credential);
+            await storeJwtToken(credential?.user?.email);
             setStatus({ error: '', success: 'Logged in with Google.' });
             navigate('/', { replace: true });
         } catch (error) {

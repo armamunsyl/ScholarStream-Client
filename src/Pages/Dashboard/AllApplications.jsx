@@ -7,6 +7,7 @@ const AllApplications = () => {
     const { role } = useOutletContext();
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [activeApplication, setActiveApplication] = useState(null);
 
     useEffect(() => {
         if (role === 'student') {
@@ -79,7 +80,12 @@ const AllApplications = () => {
                                     <td className="px-4 py-4 capitalize">{row.status}</td>
                                     <td className="px-4 py-4">
                                         <div className="flex justify-end gap-3 text-xs font-semibold">
-                                            <button className="text-[#1B3C73]">Details</button>
+                                            <button
+                                                className="text-[#1B3C73]"
+                                                onClick={() => setActiveApplication(row)}
+                                            >
+                                                Details
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -88,6 +94,74 @@ const AllApplications = () => {
                     </table>
                 )}
             </div>
+            {activeApplication && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+                    <div className="w-full max-w-lg rounded-3xl bg-white shadow-lg">
+                        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+                            <div>
+                                <p className="text-sm font-semibold text-slate-500">Application Details</p>
+                                <h3 className="text-lg font-semibold text-slate-900">{activeApplication.universityName}</h3>
+                            </div>
+                            <button
+                                type="button"
+                                className="rounded-full bg-slate-100 px-3 py-1 text-sm font-semibold text-slate-600"
+                                onClick={() => setActiveApplication(null)}
+                            >
+                                Close
+                            </button>
+                        </div>
+                        <div className="space-y-4 px-6 py-5 text-sm text-slate-600">
+                            <div className="flex justify-between">
+                                <span>Applicant</span>
+                                <span className="font-semibold text-slate-900">{activeApplication.studentName}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>Email</span>
+                                <span className="font-semibold text-slate-900">{activeApplication.studentEmail}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>Scholarship</span>
+                                <span className="font-semibold text-slate-900">{activeApplication.scholarshipName || 'Scholarship'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>University</span>
+                                <span className="font-semibold text-slate-900">{activeApplication.universityName || 'University'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>Status</span>
+                                <span className="font-semibold capitalize text-slate-900">{activeApplication.status || 'pending'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>Payment</span>
+                                <span className="font-semibold capitalize text-slate-900">{activeApplication.payment || 'unpaid'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>Applied Date</span>
+                                <span className="font-semibold text-slate-900">
+                                    {activeApplication.createdAt ? new Date(activeApplication.createdAt).toLocaleDateString() : 'N/A'}
+                                </span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>Fees</span>
+                                <span className="font-semibold text-slate-900">
+                                    {Number.isNaN(Number(activeApplication.applicationFees))
+                                        ? '—'
+                                        : `$${Number(activeApplication.applicationFees)}`}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="flex justify-end border-t border-slate-100 px-6 py-4">
+                            <button
+                                type="button"
+                                className="rounded-full border border-slate-200 px-4 py-1.5 text-xs font-semibold text-slate-600"
+                                onClick={() => setActiveApplication(null)}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </section>
     );
 };

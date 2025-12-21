@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { apiClient } from '../../utils/userApi';
+import secureApi from '../../utils/secureApi';
 
 const statusClass = {
     pending: 'bg-amber-50 text-amber-700',
@@ -30,7 +30,7 @@ const StudentApplications = () => {
         const loadApplications = async () => {
             try {
                 setLoading(true);
-                const { data } = await apiClient.get('/applications');
+                const { data } = await secureApi.get('/applications');
                 if (!isMounted) return;
                 const list = Array.isArray(data) ? data : [];
                 const mine = list.filter((item) => item.studentEmail?.toLowerCase() === authUser.email.toLowerCase());
@@ -51,6 +51,8 @@ const StudentApplications = () => {
             isMounted = false;
         };
     }, [role, authUser?.email]);
+
+    const navigate = useNavigate();
 
     if (role !== 'student') {
         return (
@@ -202,7 +204,7 @@ const StudentApplications = () => {
                                         }
                                         try {
                                             setSubmittingReview(true);
-                                            await apiClient.post('/reviews', {
+                                            await secureApi.post('/reviews', {
                                                 userName: authUser?.displayName || authUser?.email || 'ScholarStream User',
                                                 userEmail: authUser?.email || '',
                                                 userPhotoURL: authUser?.photoURL || '',
@@ -277,6 +279,12 @@ const StudentApplications = () => {
                                 type="button"
                                 className="rounded-full bg-[#1B3C73] px-4 py-1.5 text-sm font-semibold text-white disabled:opacity-60"
                                 disabled={activeApplication.payment === 'paid'}
+                                onClick={() => {
+                                    if (activeApplication.payment === 'paid') return;
+                                    const payload = { ...activeApplication };
+                                    setActiveApplication(null);
+                                    navigate('/dashboard/make-payment', { state: { application: payload } });
+                                }}
                             >
                                 {activeApplication.payment === 'paid' ? 'Paid' : 'Pay Now'}
                             </button>
@@ -311,7 +319,7 @@ const StudentApplications = () => {
                                     try {
                                         setDeleting(true);
                                         const id = confirmDelete._id || confirmDelete.id;
-                                        await apiClient.delete(`/applications/${id}`);
+                                        await secureApi.delete(`/applications/${id}`);
                                         setApplications((prev) =>
                                             prev.filter((item) => (item._id || item.id) !== id)
                                         );

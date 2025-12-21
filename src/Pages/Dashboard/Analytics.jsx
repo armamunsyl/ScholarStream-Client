@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { apiClient } from '../../utils/userApi';
+import secureApi from '../../utils/secureApi';
 
 const Analytics = () => {
     const { role } = useOutletContext();
@@ -9,6 +9,7 @@ const Analytics = () => {
         totalUsers: 0,
         totalScholarships: 0,
         approvedApplications: 0,
+        totalFees: 0,
         monthlyApprovals: 0,
     });
     const [loading, setLoading] = useState(role === 'admin');
@@ -27,10 +28,11 @@ const Analytics = () => {
                 setLoading(true);
                 setErrorMsg('');
 
-                const [usersRes, scholarshipsRes, applicationsRes] = await Promise.all([
-                    apiClient.get('/users'),
-                    apiClient.get('/scholarships'),
-                    apiClient.get('/applications'),
+                const [usersRes, scholarshipsRes, applicationsRes, paymentsRes] = await Promise.all([
+                    secureApi.get('/users'),
+                    secureApi.get('/scholarships'),
+                    secureApi.get('/applications'),
+                    secureApi.get('/payments'),
                 ]);
 
                 if (!isMounted) return;
@@ -42,6 +44,9 @@ const Analytics = () => {
                 const applications = Array.isArray(applicationsRes.data)
                     ? applicationsRes.data
                     : [applicationsRes.data].filter(Boolean);
+                const payments = Array.isArray(paymentsRes.data)
+                    ? paymentsRes.data
+                    : [paymentsRes.data].filter(Boolean);
 
                 const approved = applications.filter(
                     (app) => (app.status || '').toLowerCase() === 'approved'
@@ -54,10 +59,13 @@ const Analytics = () => {
                     return !Number.isNaN(timestamp) && timestamp >= monthStart;
                 }).length;
 
+                const totalFees = payments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
+
                 setStats({
                     totalUsers: users.length,
                     totalScholarships: scholarships.length,
                     approvedApplications: approved.length,
+                    totalFees,
                     monthlyApprovals,
                 });
             } catch (error) {
@@ -140,8 +148,8 @@ const Analytics = () => {
                                     <span className="font-semibold">{stats.totalScholarships.toLocaleString()}</span>
                                 </li>
                                 <li className="flex items-center justify-between">
-                                    <span>Total Approved</span>
-                                    <span className="font-semibold">{stats.approvedApplications.toLocaleString()}</span>
+                                    <span>Total Fees Collected</span>
+                                    <span className="font-semibold">${stats.totalFees.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
                                 </li>
                             </ul>
                         </div>
@@ -178,7 +186,7 @@ const Analytics = () => {
                         <h2 className="text-lg font-semibold text-slate-900">Insights</h2>
                         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-slate-600">
                             <li>Scholarships with service charge below $100 convert 2.4x better.</li>
-                            <li>{stats.approvedApplications.toLocaleString()} applications reached the approved state so far.</li>
+                            <li>{stats.totalFees.toLocaleString(undefined, { maximumFractionDigits: 2 })} USD collected from application fees.</li>
                             <li>{stats.monthlyApprovals.toLocaleString()} of them were completed during the last reporting month.</li>
                         </ul>
                     </div>

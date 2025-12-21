@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { apiClient } from '../../utils/userApi';
+import secureApi from '../../utils/secureApi';
 
 const overviewData = {
     student: {
@@ -88,6 +89,7 @@ const DashboardOverview = () => {
     const isAdmin = role === 'admin';
     const [applications, setApplications] = useState([]);
     const [reviews, setReviews] = useState([]);
+    const [payments, setPayments] = useState([]);
     const [scholarships, setScholarships] = useState([]);
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(isStudent || isModerator || isAdmin);
@@ -140,10 +142,11 @@ const DashboardOverview = () => {
                     setApplications(allApplications);
                     setReviews(allReviews);
                 } else if (isAdmin) {
-                    const [applicationsRes, scholarshipsRes, usersRes] = await Promise.all([
-                        apiClient.get('/applications'),
-                        apiClient.get('/scholarships'),
-                        apiClient.get('/users'),
+                    const [applicationsRes, scholarshipsRes, usersRes, paymentsRes] = await Promise.all([
+                        secureApi.get('/applications'),
+                        secureApi.get('/scholarships'),
+                        secureApi.get('/users'),
+                        secureApi.get('/payments'),
                     ]);
 
                     if (!isMounted) return;
@@ -151,10 +154,12 @@ const DashboardOverview = () => {
                     const allApplications = Array.isArray(applicationsRes.data) ? applicationsRes.data : [];
                     const allScholarships = Array.isArray(scholarshipsRes.data) ? scholarshipsRes.data : [];
                     const allUsers = Array.isArray(usersRes.data) ? usersRes.data : [];
+                    const allPayments = Array.isArray(paymentsRes.data) ? paymentsRes.data : [];
 
                     setApplications(allApplications);
                     setScholarships(allScholarships);
                     setUsers(allUsers);
+                    setPayments(allPayments);
                 }
             } catch (error) {
                 toast.error(error?.response?.data?.message || 'Failed to load dashboard data.');
@@ -241,7 +246,7 @@ const DashboardOverview = () => {
         if (isAdmin) {
             const totalUsers = users.length;
             const totalScholarships = scholarships.length;
-            const approvedApps = applications.filter((app) => (app.status || '').toLowerCase() === 'approved').length;
+            const totalFees = (payments ?? []).reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
             const sortedUsers = [...(users ?? [])]
                 .filter((user) => Boolean(user))
                 .sort((a, b) => new Date(b.createdAt || b.updatedAt || 0) - new Date(a.createdAt || a.updatedAt || 0))
@@ -251,7 +256,7 @@ const DashboardOverview = () => {
                 stats: [
                     { label: 'Total Users', value: totalUsers, color: 'bg-[#E9F8F3]', text: 'text-[#1A9273]' },
                     { label: 'Scholarships Live', value: totalScholarships, color: 'bg-[#FFF8E6]', text: 'text-[#C38B00]' },
-                    { label: 'Applications Approved', value: approvedApps, color: 'bg-[#FDEDE4]', text: 'text-[#E86A33]' },
+                    { label: 'Total Fees Collected', value: `$${totalFees.toLocaleString(undefined, { maximumFractionDigits: 2 })}`, color: 'bg-[#FDEDE4]', text: 'text-[#E86A33]' },
                 ],
                 sections: [
                     {

@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { apiClient, getUserProfile } from '../utils/userApi';
+import secureApi from '../utils/secureApi';
 import { AuthContext } from '../Provider/AuthProvider';
 
 const LocationIcon = () => (
@@ -126,7 +127,7 @@ const ScholarshipDetails = () => {
     if (!scholarship) return;
     try {
       setApplying(true);
-      await apiClient.post('/applications', {
+      await secureApi.post('/applications', {
         studentEmail: user.email,
         studentName: user.displayName || user.email?.split('@')[0] || 'ScholarStream Student',
         universityName: scholarship.universityName,
@@ -488,7 +489,7 @@ const ScholarshipDetails = () => {
                   try {
                     setAdminSaving(true);
                     const targetId = (scholarship._id || scholarship.id || '').toString();
-                    await apiClient.patch(`/scholarships/${targetId}`, adminEditData);
+                    await secureApi.patch(`/scholarships/${targetId}`, adminEditData);
                     setScholarship((prev) => (prev ? { ...prev, ...adminEditData } : prev));
                     toast.success('Scholarship updated successfully.');
                     setAdminEditing(false);

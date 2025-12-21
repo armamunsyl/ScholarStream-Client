@@ -7,6 +7,20 @@ export const apiClient = axios.create({
     },
 });
 
+export const storeJwtToken = async (email) => {
+    if (!email || !apiClient.defaults.baseURL) return null;
+    const { data } = await apiClient.post('/jwt', { email });
+    if (data?.token) {
+        localStorage.setItem('access-token', data.token);
+        return data.token;
+    }
+    return null;
+};
+
+export const clearJwtToken = () => {
+    localStorage.removeItem('access-token');
+};
+
 export const saveUser = async ({ name, email, photoURL = '', createdAt }) => {
     if (!apiClient.defaults.baseURL) {
         throw new Error('API base URL is not configured');

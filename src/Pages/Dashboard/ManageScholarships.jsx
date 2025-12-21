@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { apiClient } from '../../utils/userApi';
 import { toast } from 'react-toastify';
+import secureApi from '../../utils/secureApi';
 
 const ManageScholarships = () => {
     const { role } = useOutletContext();
@@ -19,7 +19,7 @@ const ManageScholarships = () => {
         const loadData = async () => {
             try {
                 setLoading(true);
-                const { data } = await apiClient.get('/scholarships');
+                const { data } = await secureApi.get('/scholarships');
                 if (isMounted) {
                     setScholarships(data || []);
                 }
@@ -42,7 +42,7 @@ const ManageScholarships = () => {
         const targetId = (editTarget._id || editTarget.id || '').toString();
         try {
             setSaving(true);
-            await apiClient.patch(`/scholarships/${targetId}`, formData);
+            await secureApi.patch(`/scholarships/${targetId}`, formData);
             setScholarships((prev) =>
                 prev.map((item) =>
                     ((item._id || item.id || '').toString()) === targetId ? { ...item, ...formData } : item
@@ -66,7 +66,7 @@ const ManageScholarships = () => {
         }
         setDeletingId(id);
         try {
-            await apiClient.delete(`/scholarships/${id}`);
+            await secureApi.delete(`/scholarships/${id}`);
             setScholarships((prev) =>
                 prev.filter((item) => ((item._id || item.id || '').toString()) !== id)
             );

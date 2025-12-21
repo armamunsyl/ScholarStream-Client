@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { apiClient } from '../../utils/userApi';
+import secureApi from '../../utils/secureApi';
 
 const StudentReviews = () => {
     const { role, authUser } = useOutletContext();
@@ -24,7 +24,7 @@ const StudentReviews = () => {
         const loadReviews = async () => {
             try {
                 setLoading(true);
-                const { data } = await apiClient.get('/reviews');
+                const { data } = await secureApi.get('/reviews');
                 if (!isMounted) return;
                 const list = Array.isArray(data) ? data : [];
                 const mine = list.filter((item) => item.userEmail?.toLowerCase() === authUser.email.toLowerCase());
@@ -50,7 +50,7 @@ const StudentReviews = () => {
         if (!reviewId) return;
         try {
             setDeletingId(reviewId);
-            await apiClient.delete(`/reviews/${reviewId}`);
+            await secureApi.delete(`/reviews/${reviewId}`);
             setReviews((prev) => prev.filter((review) => review._id !== reviewId));
             toast.success('Review deleted.');
             setDeleteTarget(null);
@@ -65,7 +65,7 @@ const StudentReviews = () => {
         if (!editingReview?._id) return;
         try {
             setSaving(true);
-            await apiClient.patch(`/reviews/${editingReview._id}`, {
+            await secureApi.patch(`/reviews/${editingReview._id}`, {
                 comment: formData.comment,
                 rating: formData.rating,
             });

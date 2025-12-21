@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Provider/AuthProvider';
-import { saveUser, saveFirebaseCredential } from '../utils/userApi';
+import { saveUser, saveFirebaseCredential, storeJwtToken } from '../utils/userApi';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -28,6 +28,7 @@ const Register = () => {
                 photoURL: formData.photoURL,
                 createdAt: new Date().toISOString(),
             });
+            await storeJwtToken(formData.email);
             setStatus({ error: '', success: 'Account created successfully!' });
             navigate('/', { replace: true });
         } catch (error) {
@@ -43,6 +44,7 @@ const Register = () => {
         try {
             const credential = await googleLogin();
             await saveFirebaseCredential(credential);
+            await storeJwtToken(credential?.user?.email);
             setStatus({ error: '', success: 'Signed in with Google.' });
             navigate('/', { replace: true });
         } catch (error) {

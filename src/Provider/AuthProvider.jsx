@@ -10,6 +10,7 @@ import {
   updateProfile,
 } from "firebase/auth";
 import app from "../../src/firebase.config";
+import { clearJwtToken, storeJwtToken } from "../utils/userApi";
 
 export const AuthContext = createContext(null);
 const auth = getAuth(app);
@@ -36,6 +37,7 @@ const AuthProvider = ({ children }) => {
 
   const logOut = () => {
     setLoading(true);
+    clearJwtToken();
     return signOut(auth);
   };
 
@@ -51,8 +53,13 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      if (currentUser?.email) {
+        await storeJwtToken(currentUser.email);
+      } else {
+        clearJwtToken();
+      }
       setLoading(false);
     });
     return () => unsubscribe();

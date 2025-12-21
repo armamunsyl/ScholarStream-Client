@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { apiClient } from '../../utils/userApi';
 import { toast } from 'react-toastify';
+import secureApi from '../../utils/secureApi';
 
 const ManageUsers = () => {
     const { role } = useOutletContext();
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [updatingUserId, setUpdatingUserId] = useState('');
+    const [confirmDelete, setConfirmDelete] = useState(null);
 
     useEffect(() => {
         if (role !== 'admin') return;
@@ -16,7 +17,7 @@ const ManageUsers = () => {
         const loadUsers = async () => {
             try {
                 setLoading(true);
-                const { data } = await apiClient.get('/users');
+                const { data } = await secureApi.get('/users');
                 if (isMounted) {
                     setUsers(Array.isArray(data) ? data : [data].filter(Boolean));
                 }
@@ -84,7 +85,7 @@ const ManageUsers = () => {
                                                 if (!userId || newRole === user.role) return;
                                                 try {
                                                     setUpdatingUserId(userId);
-                                                    await apiClient.patch(`/users/${userId}/role`, { role: newRole });
+                                                    await secureApi.patch(`/users/${userId}/role`, { role: newRole });
                                                     setUsers((prev) =>
                                                         prev.map((item) =>
                                                             (item._id || item.id) === userId ? { ...item, role: newRole } : item
@@ -102,7 +103,12 @@ const ManageUsers = () => {
                                             <option value="moderator">moderator</option>
                                             <option value="student">student</option>
                                         </select>
-                                        <button className="ml-4 text-xs font-semibold text-red-500">Delete</button>
+                                        <button
+                                            className="ml-4 text-xs font-semibold text-red-500"
+                                            onClick={() => setConfirmDelete(user)}
+                                        >
+                                            Delete
+                                        </button>
                                     </td>
                                 </tr>
                             ))}
@@ -110,6 +116,52 @@ const ManageUsers = () => {
                     </table>
                 )}
             </div>
+            {confirmDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+                    <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-lg">
+                        <h3 className="text-lg font-semibold text-slate-900">Delete User</h3>
+                        <p className="mt-2 text-sm text-slate-600">
+                            Remove{' '}
+                            <span className="font-semibold text-slate-900">
+                                {confirmDelete.name || confirmDelete.email}
+                            </span>
+                            ?
+                        </p>
+                        <div className="mt-5 flex justify-end gap-3">
+                            <button
+                                type="button"
+                                className="rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600"
+                                onClick={() => setConfirmDelete(null)}
+                                disabled={updatingUserId === (confirmDelete._id || confirmDelete.id)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                className="rounded-full bg-red-500 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+                                disabled={updatingUserId === (confirmDelete._id || confirmDelete.id)}
+                                onClick={async () => {
+                                    const userId = confirmDelete._id || confirmDelete.id;
+                                    if (!userId) return;
+                                    try {
+                                        setUpdatingUserId(userId);
+                                        await secureApi.delete(`/users/${userId}`);
+                                        setUsers((prev) => prev.filter((user) => (user._id || user.id) !== userId));
+                                        toast.success(`${confirmDelete.name || confirmDelete.email} deleted.`);
+                                        setConfirmDelete(null);
+                                    } catch (error) {
+                                        toast.error(error?.response?.data?.message || 'Failed to delete user.');
+                                    } finally {
+                                        setUpdatingUserId('');
+                                    }
+                                }}
+                            >
+                                Confirm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </section>
     );
 };

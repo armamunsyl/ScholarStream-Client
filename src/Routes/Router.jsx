@@ -22,6 +22,7 @@ import ManageScholarships from "../Pages/Dashboard/ManageScholarships";
 import AddScholarship from "../Pages/Dashboard/AddScholarship";
 import PaymentRecords from "../Pages/Dashboard/PaymentRecords";
 import Analytics from "../Pages/Dashboard/Analytics";
+import MakePayment from "../Pages/Dashboard/MakePayment";
 
 const router = createBrowserRouter ([
     {
@@ -79,6 +80,10 @@ const router = createBrowserRouter ([
             {
                 path: "payment-history",
                 Component: PaymentHistory,
+            },
+            {
+                path: "make-payment",
+                Component: MakePayment,
             },
             {
                 path: "my-profile",
