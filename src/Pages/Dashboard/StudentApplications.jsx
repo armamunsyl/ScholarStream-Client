@@ -14,8 +14,10 @@ const StudentApplications = () => {
     const [applications, setApplications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeApplication, setActiveApplication] = useState(null);
+    const [confirmDelete, setConfirmDelete] = useState(null);
     const [reviewData, setReviewData] = useState({ rating: 0, comment: '' });
     const [submittingReview, setSubmittingReview] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     useEffect(() => {
         if (role !== 'student' || !authUser?.email) {
@@ -115,7 +117,17 @@ const StudentApplications = () => {
                                                 >
                                                     Details
                                                 </button>
-                                                {application.status === 'pending' && <button className="text-emerald-600">Pay</button>}
+                                                {application.status?.toLowerCase() === 'pending' && (
+                                                    <button
+                                                        className="text-red-500"
+                                                        onClick={() => {
+                                                            toast.info('You have Nothing to edit');
+                                                            setConfirmDelete(application);
+                                                        }}
+                                                    >
+                                                        Edit
+                                                    </button>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>
@@ -267,6 +279,52 @@ const StudentApplications = () => {
                                 disabled={activeApplication.payment === 'paid'}
                             >
                                 {activeApplication.payment === 'paid' ? 'Paid' : 'Pay Now'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {confirmDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+                    <div className="w-full max-w-md rounded-3xl bg-white p-6 shadow-lg">
+                        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                            <h3 className="text-lg font-semibold text-slate-900">You have nothing to edit !</h3>
+                            <button
+                                type="button"
+                                className="text-slate-500"
+                                onClick={() => setConfirmDelete(null)}
+                            >
+                                ✕
+                            </button>
+                        </div>
+                        <p className="mt-4 text-sm text-slate-600">
+                            Do you want to delete your application for{' '}
+                            <span className="font-semibold text-slate-900">{confirmDelete.universityName}</span>?
+                        </p>
+                        <div className="mt-6 flex justify-end">
+                            <button
+                                type="button"
+                                className="rounded-full bg-red-500 px-4 py-2 text-sm font-semibold text-white disabled:opacity-70"
+                                disabled={deleting}
+                                onClick={async () => {
+                                    if (!confirmDelete?._id && !confirmDelete?.id) return;
+                                    try {
+                                        setDeleting(true);
+                                        const id = confirmDelete._id || confirmDelete.id;
+                                        await apiClient.delete(`/applications/${id}`);
+                                        setApplications((prev) =>
+                                            prev.filter((item) => (item._id || item.id) !== id)
+                                        );
+                                        toast.success('Application deleted.');
+                                        setConfirmDelete(null);
+                                    } catch (error) {
+                                        toast.error(error?.response?.data?.message || 'Failed to delete application.');
+                                    } finally {
+                                        setDeleting(false);
+                                    }
+                                }}
+                            >
+                                {deleting ? 'Deleting...' : 'Delete Application'}
                             </button>
                         </div>
                     </div>
