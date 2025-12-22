@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 
 const Hero = () => {
     const fadeInUp = {
@@ -48,12 +49,14 @@ const Hero = () => {
                                 className="ml-4 flex-1 bg-transparent text-sm text-white placeholder:text-white/80 outline-none sm:text-base"
                             />
                         </label>
+                       <Link to={"/scholarships"}>
                         <button
                             type="button"
                             className="h-14 w-full rounded-full bg-[#16632F] px-6 text-sm font-semibold text-white shadow-lg shadow-black/30 transition hover:bg-[#135029] sm:w-auto sm:min-w-[260px] sm:text-base"
                         >
                             Browse Scholarships
                         </button>
+                       </Link>
                     </div>
                 </motion.div>
 
