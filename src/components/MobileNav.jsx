@@ -3,17 +3,10 @@ import { NavLink } from 'react-router-dom';
 const publicItems = [
     { path: '/', label: 'Home', icon: HomeIcon },
     { path: '/scholarships', label: 'Scholarships', icon: BookIcon },
-    { path: '/dashboard', label: 'Dashboard', icon: StarIcon },
+    
     { path: '/faq', label: 'FAQ', icon: HelpIcon },
-    { path: '/dashboard/my-profile', label: 'Account', icon: UserIcon }
-];
-
-const dashboardItems = [
-    { path: '/dashboard', label: 'Overview', icon: HomeIcon },
-    { path: '/dashboard/my-applications', label: 'Applications', icon: BookIcon, roles: ['student'] },
-    { path: '/dashboard/my-reviews', label: 'Reviews', icon: StarIcon, roles: ['student'] },
-    { path: '/dashboard/review-applications', label: 'Review Apps', icon: HelpIcon, roles: ['moderator'] },
-    { path: '/dashboard/manage-users', label: 'Users', icon: UserIcon, roles: ['admin'] },
+    { path: '/dashboard', label: 'Dashboard', icon: StarIcon },
+    { path: 'menu', label: 'Menu', icon: MenuIcon }
 ];
 
 function HomeIcon(props) {
@@ -61,35 +54,45 @@ function HelpIcon(props) {
     );
 }
 
-function UserIcon(props) {
+function MenuIcon(props) {
     return (
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" {...props}>
-            <circle cx="12" cy="8" r="4" strokeWidth="1.8" />
-            <path d="M4 20c1.43-3 4.76-4 8-4s6.57 1 8 4" strokeWidth="1.8" strokeLinecap="round" />
+            <path d="M4 6h16M4 12h16M10 18h10" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M4 18l3-3-3-3" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     );
 }
 
-const MobileNav = ({ role = 'guest', isDashboard }) => {
-    const items = isDashboard
-        ? dashboardItems.filter((item) => !item.roles || item.roles.includes(role))
-        : publicItems;
+const MobileNav = ({ role = 'guest', onAccountAction, showMenu = false }) => {
+    const items = showMenu ? publicItems : publicItems.filter((item) => item.label !== 'Menu');
     return (
         <nav className="fixed bottom-0 left-0 z-50 w-full border-t border-white/10 bg-[#11264F] px-2 py-2 text-white shadow-[0_-4px_12px_rgba(0,0,0,0.25)] md:hidden">
             <div className="mx-auto flex max-w-6xl items-center justify-between">
                 {items.map(({ path, label, icon: Icon }) => (
-                    <NavLink
-                        key={path}
-                        to={path}
-                        className={({ isActive }) =>
-                            `flex flex-1 flex-col items-center gap-1 rounded-xl px-1 py-2 text-[11px] font-medium transition ${
-                                isActive ? 'bg-white/10 text-white' : 'text-white/70'
-                            }`
-                        }
-                    >
-                        <Icon className="h-5 w-5" />
-                        {label}
-                    </NavLink>
+                    label === 'Menu' && showMenu && typeof onAccountAction === 'function' ? (
+                        <button
+                            type="button"
+                            key={path}
+                            onClick={onAccountAction}
+                            className="flex flex-1 flex-col items-center gap-1 rounded-xl px-1 py-2 text-[11px] font-medium text-white transition hover:bg-white/10"
+                        >
+                            <Icon className="h-5 w-5" />
+                            {label}
+                        </button>
+                    ) : (
+                        <NavLink
+                            key={path}
+                            to={path}
+                            className={({ isActive }) =>
+                                `flex flex-1 flex-col items-center gap-1 rounded-xl px-1 py-2 text-[11px] font-medium transition ${
+                                    isActive ? 'bg-white/10 text-white' : 'text-white/70'
+                                }`
+                            }
+                        >
+                            <Icon className="h-5 w-5" />
+                            {label}
+                        </NavLink>
+                    )
                 ))}
             </div>
         </nav>

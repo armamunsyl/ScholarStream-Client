@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import useDashboardUser from '../hooks/useDashboardUser';
 import Navbar from '../components/Navbar';
@@ -41,6 +41,7 @@ const roleBadge = {
 const DashboardLayout = () => {
     const navigate = useNavigate();
     const { authUser, profile, loading, error, logOut } = useDashboardUser();
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const normalizedRole = useMemo(() => profile?.role?.toLowerCase?.() ?? 'student', [profile?.role]);
     const links = navConfig[normalizedRole] ?? navConfig.student;
@@ -88,7 +89,7 @@ const DashboardLayout = () => {
         content = (
             <section className="bg-[#F9F6F1] py-6">
                 <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 md:flex-row">
-                    <aside className="w-full rounded-3xl bg-white p-6 shadow-sm md:w-72">
+                    <aside className="hidden rounded-3xl bg-white p-6 shadow-sm md:block md:w-72">
                         <div className="text-center">
                             <div className="mx-auto h-24 w-24 overflow-hidden rounded-full border-4 border-[#F2D5C4] bg-slate-100">
                                 {avatarSrc ? (
@@ -143,7 +144,7 @@ const DashboardLayout = () => {
                         </div>
                     </aside>
 
-                    <div className="flex-1">
+                    <div className="w-full md:flex-1">
                         <div className="rounded-3xl bg-white p-6 shadow-sm">
                             {error ? (
                                 <div className="rounded-2xl border border-red-100 bg-red-50 p-6 text-center text-red-600">
@@ -164,7 +165,60 @@ const DashboardLayout = () => {
             <Navbar />
             <div className="pt-24">{content}</div>
             <Footer />
-            <MobileNav role={profile?.role?.toLowerCase?.()} isDashboard />
+            <MobileNav
+                role={profile?.role?.toLowerCase?.()}
+                onAccountAction={() => setMobileMenuOpen(true)}
+                showMenu
+            />
+            {mobileMenuOpen && (
+                <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 px-4 pb-4 md:hidden">
+                    <div className="w-full max-w-sm rounded-3xl bg-white p-6 shadow-lg">
+                        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                            <div>
+                                <p className="text-sm font-semibold text-slate-900">{avatarName}</p>
+                                <p className="text-xs text-slate-500">{authUser?.email || profile?.email}</p>
+                            </div>
+                            <button
+                                type="button"
+                                className="text-sm font-semibold text-slate-500"
+                                onClick={() => setMobileMenuOpen(false)}
+                            >
+                                Close
+                            </button>
+                        </div>
+                        <nav className="mt-6 flex flex-col gap-1">
+                            {links.map((item) => (
+                                <NavLink
+                                    key={item.path}
+                                    to={item.path}
+                                    end={item.path === '/dashboard'}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className={({ isActive }) =>
+                                        `flex items-center gap-3 rounded-2xl px-4 py-2 text-sm font-semibold transition ${
+                                            isActive ? 'bg-[#1B3C73] text-white' : 'text-slate-600 hover:bg-slate-100'
+                                        }`
+                                    }
+                                >
+                                    <span className="text-lg text-[#F58A4B]">•</span>
+                                    {item.label}
+                                </NavLink>
+                            ))}
+                        </nav>
+                        <div className="mt-6">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setMobileMenuOpen(false);
+                                    handleLogout();
+                                }}
+                                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-red-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-600"
+                            >
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
