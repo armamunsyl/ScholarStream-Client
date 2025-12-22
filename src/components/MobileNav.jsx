@@ -5,7 +5,7 @@ const publicItems = [
     { path: '/scholarships', label: 'Scholarships', icon: BookIcon },
     { path: '/dashboard', label: 'Dashboard', icon: StarIcon },
     { path: '/faq', label: 'FAQ', icon: HelpIcon },
-    { path: '/login', label: 'Account', icon: UserIcon }
+    { path: '/dashboard/my-profile', label: 'Account', icon: UserIcon }
 ];
 
 const dashboardItems = [
