@@ -10,7 +10,9 @@ const Scholarships = () => {
     const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640);
     const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
+    const [sortOption, setSortOption] = useState('date_desc');
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 640);
@@ -19,12 +21,23 @@ const Scholarships = () => {
     }, []);
 
     useEffect(() => {
+        const handler = setTimeout(() => setDebouncedSearch(searchQuery.trim()), 500);
+        return () => clearTimeout(handler);
+    }, [searchQuery]);
+
+    useEffect(() => {
         let isMounted = true;
 
         const fetchScholarships = async () => {
             try {
                 setLoading(true);
-                const { data } = await apiClient.get('/scholarships');
+                const { data } = await apiClient.get('/scholarships', {
+                    params: {
+                        search: debouncedSearch || undefined,
+                        category: selectedCategory,
+                        sort: sortOption,
+                    },
+                });
                 if (isMounted) {
                     setScholarships(Array.isArray(data) ? data : []);
                 }
@@ -44,34 +57,10 @@ const Scholarships = () => {
         return () => {
             isMounted = false;
         };
-    }, []);
+    }, [debouncedSearch, selectedCategory, sortOption]);
 
     const pageSize = isMobile ? 10 : 9;
-
-    const filteredScholarships = useMemo(() => {
-        const query = searchQuery.trim().toLowerCase();
-        const category = selectedCategory.toLowerCase();
-
-        return scholarships.filter((item) => {
-            const categoryValue = item.scholarshipCategory?.toLowerCase() || '';
-            const matchesCategory =
-                category === 'all' ||
-                (category === 'full' && categoryValue.includes('full')) ||
-                (category === 'pertial' && categoryValue.includes('pertial'));
-
-            if (!matchesCategory) return false;
-
-            if (!query) return true;
-
-            const searchPool = [item.scholarshipName, item.universityName, item.degree]
-                .filter(Boolean)
-                .map((value) => value.toLowerCase());
-
-            return searchPool.some((value) => value.includes(query));
-        });
-    }, [scholarships, searchQuery, selectedCategory]);
-
-    const totalPages = Math.max(1, Math.ceil((filteredScholarships.length || 0) / pageSize));
+    const totalPages = Math.max(1, Math.ceil((scholarships.length || 0) / pageSize));
 
     useEffect(() => {
         setPage((prev) => Math.min(prev, totalPages));
@@ -79,13 +68,13 @@ const Scholarships = () => {
 
     useEffect(() => {
         setPage(1);
-    }, [searchQuery, selectedCategory]);
+    }, [debouncedSearch, selectedCategory, sortOption, pageSize]);
 
     const pageData = useMemo(() => {
-        if (!filteredScholarships.length) return [];
+        if (!scholarships.length) return [];
         const start = (page - 1) * pageSize;
-        return filteredScholarships.slice(start, start + pageSize);
-    }, [page, pageSize, filteredScholarships]);
+        return scholarships.slice(start, start + pageSize);
+    }, [page, pageSize, scholarships]);
 
     const handlePageChange = (direction) => {
         setPage((prev) => {
@@ -104,11 +93,10 @@ const Scholarships = () => {
             );
         }
         if (!pageData.length) {
+            const hasFilters = Boolean(debouncedSearch || selectedCategory !== 'all');
             return (
                 <div className="col-span-full rounded-3xl border border-slate-100 bg-white p-10 text-center text-slate-500">
-                    {filteredScholarships.length
-                        ? 'No scholarships match your filters.'
-                        : 'No scholarships available right now.'}
+                    {hasFilters ? 'No scholarships match your filters.' : 'No scholarships available right now.'}
                 </div>
             );
         }
@@ -207,7 +195,7 @@ const Scholarships = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.2, duration: 0.6 }}
-                    className="mt-10 grid gap-4 sm:grid-cols-3"
+                    className="mt-10 grid gap-4 sm:grid-cols-4"
                 >
                     <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2 sm:col-span-2">
                         <svg
@@ -237,8 +225,17 @@ const Scholarships = () => {
                         onChange={(e) => setSelectedCategory(e.target.value)}
                     >
                         <option value="all">All Category</option>
-                        <option value="full">Full Fund</option>
-                        <option value="pertial">Pertial Fund</option>
+                        <option value="Full Fund">Full Fund</option>
+                        <option value="Pertial Fund">Partial Fund</option>
+                    </select>
+                    <select
+                        className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 outline-none"
+                        value={sortOption}
+                        onChange={(e) => setSortOption(e.target.value)}
+                    >
+                        <option value="date_desc">Latest First</option>
+                        <option value="fee_asc">Fee: Low to High</option>
+                        <option value="fee_desc">Fee: High to Low</option>
                     </select>
                 </motion.div>
 
@@ -254,12 +251,12 @@ const Scholarships = () => {
                     transition={{ delay: 0.1 }}
                 >
                     {(() => {
-                        const total = filteredScholarships.length;
+                        const total = scholarships.length;
                         const startCount = total ? (page - 1) * pageSize + 1 : 0;
                         const endCount = total ? Math.min(page * pageSize, total) : 0;
                         return (
                             <p className="text-sm text-slate-500">
-                                Showing {startCount}-{endCount} of {total || scholarships.length} scholarships
+                                Showing {startCount}-{endCount} of {total} scholarships
                             </p>
                         );
                     })()}
