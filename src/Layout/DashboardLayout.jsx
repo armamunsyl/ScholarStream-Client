@@ -18,7 +18,7 @@ const navConfig = {
         { label: 'Review Applications', path: '/dashboard/review-applications' },
         { label: 'All Applications', path: '/dashboard/all-applications' },
         { label: 'Feedback Center', path: '/dashboard/application-feedback' },
-        { label: 'Reports', path: '/dashboard/reports' },
+        // { label: 'Reports', path: '/dashboard/reports' },
         { label: 'My Profile', path: '/dashboard/my-profile' },
     ],
     admin: [
