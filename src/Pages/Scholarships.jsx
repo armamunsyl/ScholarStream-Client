@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { apiClient } from '../utils/userApi';
+import LoadingSkeleton from '../components/LoadingSkeleton';
 
 const Scholarships = () => {
     const [scholarships, setScholarships] = useState([]);
@@ -87,8 +88,8 @@ const Scholarships = () => {
     const renderCards = () => {
         if (loading) {
             return (
-                <div className="col-span-full flex min-h-[200px] items-center justify-center rounded-3xl bg-white text-slate-500">
-                    Loading scholarships...
+                <div className="col-span-full">
+                    <LoadingSkeleton variant="list" rows={isMobile ? 3 : 6} />
                 </div>
             );
         }

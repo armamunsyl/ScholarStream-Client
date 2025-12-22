@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import secureApi from '../../utils/secureApi';
+import LoadingSkeleton from '../../components/LoadingSkeleton';
 
 const ManageUsers = () => {
     const { role } = useOutletContext();
@@ -72,9 +73,7 @@ const ManageUsers = () => {
 
             <div className="overflow-x-auto rounded-2xl border border-slate-100">
                 {loading ? (
-                    <div className="flex min-h-[200px] items-center justify-center text-sm text-slate-500">
-                        Loading users...
-                    </div>
+                    <LoadingSkeleton variant="table" />
                 ) : filteredUsers.length === 0 ? (
                     <div className="p-6 text-center text-sm text-slate-500">No users found.</div>
                 ) : (

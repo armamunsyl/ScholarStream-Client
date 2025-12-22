@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { apiClient, getUserProfile } from '../utils/userApi';
 import secureApi from '../utils/secureApi';
 import { AuthContext } from '../Provider/AuthProvider';
+import LoadingSkeleton from '../components/LoadingSkeleton';
 
 const LocationIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5 text-slate-500">
@@ -149,8 +150,13 @@ const ScholarshipDetails = () => {
 
   if (loading) {
     return (
-      <section className="flex min-h-screen items-center justify-center bg-slate-50 text-slate-600">
-        <p className="text-lg font-medium">Loading scholarship details...</p>
+      <section className="bg-slate-50 px-4 py-10">
+        <div className="mx-auto max-w-5xl space-y-6">
+          <div className="flex justify-center">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-[#1B3C73]" />
+          </div>
+          <LoadingSkeleton rows={8} />
+        </div>
       </section>
     );
   }

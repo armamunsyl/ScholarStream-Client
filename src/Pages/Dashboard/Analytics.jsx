@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import secureApi from '../../utils/secureApi';
+import LoadingSkeleton from '../../components/LoadingSkeleton';
 
 const Analytics = () => {
     const { role } = useOutletContext();
@@ -124,9 +125,7 @@ const Analytics = () => {
             </header>
 
             {loading ? (
-                <div className="rounded-2xl border border-slate-100 p-6 text-center text-sm text-slate-500">
-                    Loading analytics...
-                </div>
+                <LoadingSkeleton rows={6} />
             ) : (
                 <>
                     {errorMsg && (

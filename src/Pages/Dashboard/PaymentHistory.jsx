@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import secureApi from '../../utils/secureApi';
+import LoadingSkeleton from '../../components/LoadingSkeleton';
 
 const PaymentHistory = () => {
     const { role, authUser } = useOutletContext();
@@ -46,11 +47,7 @@ const PaymentHistory = () => {
     }
 
     if (loading) {
-        return (
-            <section className="rounded-2xl border border-slate-100 p-6 text-center text-sm text-slate-500">
-                Loading payment history...
-            </section>
-        );
+        return <LoadingSkeleton variant="table" />;
     }
 
     if (error) {

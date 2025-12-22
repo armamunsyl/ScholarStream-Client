@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useOutletContext, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import secureApi from '../../utils/secureApi';
+import LoadingSkeleton from '../../components/LoadingSkeleton';
 
 const statusClass = {
     pending: 'bg-amber-50 text-amber-700',
@@ -70,9 +71,7 @@ const StudentApplications = () => {
             </div>
             <div className="overflow-x-auto rounded-2xl border border-slate-100">
                 {loading ? (
-                    <div className="flex min-h-[200px] items-center justify-center text-sm text-slate-500">
-                        Loading applications...
-                    </div>
+                    <LoadingSkeleton variant="table" />
                 ) : applications.length === 0 ? (
                     <div className="p-6 text-center text-sm text-slate-500">You have not applied yet.</div>
                 ) : (

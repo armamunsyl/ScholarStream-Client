@@ -3,6 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { apiClient } from '../../utils/userApi';
 import secureApi from '../../utils/secureApi';
+import LoadingSkeleton from '../../components/LoadingSkeleton';
 
 const overviewData = {
     student: {
@@ -289,9 +290,7 @@ const DashboardOverview = () => {
             </header>
 
             {loading ? (
-                <div className="rounded-2xl border border-slate-100 p-6 text-center text-sm text-slate-500">
-                    Loading overview...
-                </div>
+                <LoadingSkeleton rows={6} />
             ) : (
                 <>
                     <div className={`grid gap-4 ${data.stats.length === 2 ? 'sm:grid-cols-2' : 'sm:grid-cols-3'}`}>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import secureApi from '../../utils/secureApi';
+import LoadingSkeleton from '../../components/LoadingSkeleton';
 
 const PaymentRecords = () => {
     const { role } = useOutletContext();
@@ -51,7 +52,7 @@ const PaymentRecords = () => {
 
             <div className="overflow-x-auto rounded-2xl border border-slate-100">
                 {loading ? (
-                    <div className="p-6 text-center text-sm text-slate-500">Loading payment records...</div>
+                    <LoadingSkeleton variant="table" />
                 ) : error ? (
                     <div className="p-6 text-center text-sm text-red-500">{error}</div>
                 ) : records.length === 0 ? (
