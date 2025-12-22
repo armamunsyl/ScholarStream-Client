@@ -245,8 +245,8 @@ const ScholarshipDetails = () => {
 
             <div className="flex flex-col items-end gap-3 text-right">
               <div>
-                <p className="text-sm text-slate-500">Tuition / year</p>
-                <p className="text-3xl font-semibold text-slate-900">{formatCurrency(tuitionFees)}</p>
+                <p className="text-sm text-slate-500">Application Fee</p>
+                <p className="text-3xl font-semibold text-slate-900">{formatCurrency(applicationFees)}</p>
               </div>
               {userRole === 'admin' ? (
                 <button

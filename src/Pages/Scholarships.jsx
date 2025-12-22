@@ -9,6 +9,8 @@ const Scholarships = () => {
     const [page, setPage] = useState(1);
     const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640);
     const [loading, setLoading] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('all');
 
     useEffect(() => {
         const handleResize = () => setIsMobile(window.innerWidth < 640);
@@ -45,17 +47,45 @@ const Scholarships = () => {
     }, []);
 
     const pageSize = isMobile ? 10 : 9;
-    const totalPages = Math.max(1, Math.ceil((scholarships.length || 0) / pageSize));
+
+    const filteredScholarships = useMemo(() => {
+        const query = searchQuery.trim().toLowerCase();
+        const category = selectedCategory.toLowerCase();
+
+        return scholarships.filter((item) => {
+            const categoryValue = item.scholarshipCategory?.toLowerCase() || '';
+            const matchesCategory =
+                category === 'all' ||
+                (category === 'full' && categoryValue.includes('full')) ||
+                (category === 'pertial' && categoryValue.includes('pertial'));
+
+            if (!matchesCategory) return false;
+
+            if (!query) return true;
+
+            const searchPool = [item.scholarshipName, item.universityName, item.degree]
+                .filter(Boolean)
+                .map((value) => value.toLowerCase());
+
+            return searchPool.some((value) => value.includes(query));
+        });
+    }, [scholarships, searchQuery, selectedCategory]);
+
+    const totalPages = Math.max(1, Math.ceil((filteredScholarships.length || 0) / pageSize));
 
     useEffect(() => {
         setPage((prev) => Math.min(prev, totalPages));
     }, [totalPages]);
 
+    useEffect(() => {
+        setPage(1);
+    }, [searchQuery, selectedCategory]);
+
     const pageData = useMemo(() => {
-        if (!scholarships.length) return [];
+        if (!filteredScholarships.length) return [];
         const start = (page - 1) * pageSize;
-        return scholarships.slice(start, start + pageSize);
-    }, [page, pageSize, scholarships]);
+        return filteredScholarships.slice(start, start + pageSize);
+    }, [page, pageSize, filteredScholarships]);
 
     const handlePageChange = (direction) => {
         setPage((prev) => {
@@ -76,7 +106,9 @@ const Scholarships = () => {
         if (!pageData.length) {
             return (
                 <div className="col-span-full rounded-3xl border border-slate-100 bg-white p-10 text-center text-slate-500">
-                    No scholarships available right now.
+                    {filteredScholarships.length
+                        ? 'No scholarships match your filters.'
+                        : 'No scholarships available right now.'}
                 </div>
             );
         }
@@ -175,7 +207,7 @@ const Scholarships = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.2, duration: 0.6 }}
-                    className="mt-10 grid gap-4 sm:grid-cols-4"
+                    className="mt-10 grid gap-4 sm:grid-cols-3"
                 >
                     <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-2 sm:col-span-2">
                         <svg
@@ -195,18 +227,19 @@ const Scholarships = () => {
                             type="text"
                             placeholder="Scholarship name, University, Degree"
                             className="w-full bg-transparent text-sm text-slate-700 outline-none"
-                            disabled
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
-                    {['Scholarship Category', 'Subject Category', 'Sort by'].map((placeholder) => (
-                        <select
-                            key={placeholder}
-                            className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 outline-none"
-                            disabled
-                        >
-                            <option>{placeholder}</option>
-                        </select>
-                    ))}
+                    <select
+                        className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 outline-none"
+                        value={selectedCategory}
+                        onChange={(e) => setSelectedCategory(e.target.value)}
+                    >
+                        <option value="all">All Category</option>
+                        <option value="full">Full Fund</option>
+                        <option value="pertial">Pertial Fund</option>
+                    </select>
                 </motion.div>
 
                 <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
@@ -221,11 +254,12 @@ const Scholarships = () => {
                     transition={{ delay: 0.1 }}
                 >
                     {(() => {
-                        const startCount = scholarships.length ? (page - 1) * pageSize + 1 : 0;
-                        const endCount = scholarships.length ? Math.min(page * pageSize, scholarships.length) : 0;
+                        const total = filteredScholarships.length;
+                        const startCount = total ? (page - 1) * pageSize + 1 : 0;
+                        const endCount = total ? Math.min(page * pageSize, total) : 0;
                         return (
                             <p className="text-sm text-slate-500">
-                                Showing {startCount}-{endCount} of {scholarships.length} scholarships
+                                Showing {startCount}-{endCount} of {total || scholarships.length} scholarships
                             </p>
                         );
                     })()}
