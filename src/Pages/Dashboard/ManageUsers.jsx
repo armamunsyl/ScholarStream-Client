@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import secureApi from '../../utils/secureApi';
@@ -9,6 +9,7 @@ const ManageUsers = () => {
     const [loading, setLoading] = useState(true);
     const [updatingUserId, setUpdatingUserId] = useState('');
     const [confirmDelete, setConfirmDelete] = useState(null);
+    const [roleFilter, setRoleFilter] = useState('all');
 
     useEffect(() => {
         if (role !== 'admin') return;
@@ -36,6 +37,12 @@ const ManageUsers = () => {
         };
     }, [role]);
 
+    const filteredUsers = useMemo(() => {
+        if (roleFilter === 'all') return users;
+        const target = roleFilter.toLowerCase();
+        return users.filter((user) => user.role?.toLowerCase() === target);
+    }, [users, roleFilter]);
+
     if (role !== 'admin') {
         return <p className="text-sm text-slate-500">Only admins can manage users.</p>;
     }
@@ -47,12 +54,28 @@ const ManageUsers = () => {
                 <p className="text-sm text-slate-500">Promote, demote, or remove accounts.</p>
             </header>
 
+            <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-100 bg-white px-4 py-3">
+                <span className="text-sm font-medium text-slate-600">
+                    Showing {filteredUsers.length} of {users.length} users
+                </span>
+                <select
+                    value={roleFilter}
+                    onChange={(event) => setRoleFilter(event.target.value)}
+                    className="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 outline-none focus:border-[#1B3C73]"
+                >
+                    <option value="all">All roles</option>
+                    <option value="admin">Admins</option>
+                    <option value="moderator">Moderators</option>
+                    <option value="student">Students</option>
+                </select>
+            </div>
+
             <div className="overflow-x-auto rounded-2xl border border-slate-100">
                 {loading ? (
                     <div className="flex min-h-[200px] items-center justify-center text-sm text-slate-500">
                         Loading users...
                     </div>
-                ) : users.length === 0 ? (
+                ) : filteredUsers.length === 0 ? (
                     <div className="p-6 text-center text-sm text-slate-500">No users found.</div>
                 ) : (
                     <table className="min-w-full text-left text-sm">
@@ -65,7 +88,7 @@ const ManageUsers = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {users.map((user) => (
+                            {filteredUsers.map((user) => (
                                 <tr key={user._id || user.id} className="border-t border-slate-100 text-slate-600">
                                     <td className="px-4 py-4 font-semibold text-slate-900">{user.name}</td>
                                     <td className="px-4 py-4">{user.email}</td>
