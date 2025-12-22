@@ -226,7 +226,7 @@ const Scholarships = () => {
                     >
                         <option value="all">All Category</option>
                         <option value="Full Fund">Full Fund</option>
-                        <option value="Pertial Fund">Partial Fund</option>
+                        <option value="Partial Fund">Partial Fund</option>
                     </select>
                     <select
                         className="rounded-2xl border border-slate-200 bg-white px-4 py-2 text-sm text-slate-700 outline-none"

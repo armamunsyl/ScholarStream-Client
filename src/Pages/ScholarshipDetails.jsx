@@ -46,6 +46,7 @@ const ScholarshipDetails = () => {
     country: '',
     tuitionFees: '',
     status: '',
+    image: '',
   });
   const [userRole, setUserRole] = useState('');
 
@@ -260,6 +261,7 @@ const ScholarshipDetails = () => {
                       country: scholarship.country || '',
                       tuitionFees: scholarship.tuitionFees || '',
                       status: scholarship.status || '',
+                      image: scholarship.image || '',
                     });
                     setAdminEditing(true);
                   }}
@@ -430,6 +432,15 @@ const ScholarshipDetails = () => {
                   className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-slate-700 focus:border-[#1B3C73] focus:outline-none"
                   value={adminEditData.universityName}
                   onChange={(event) => setAdminEditData((prev) => ({ ...prev, universityName: event.target.value }))}
+                />
+              </label>
+              <label className="text-sm text-slate-600">
+                Image URL
+                <input
+                  type="url"
+                  className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-slate-700 focus:border-[#1B3C73] focus:outline-none"
+                  value={adminEditData.image || ''}
+                  onChange={(event) => setAdminEditData((prev) => ({ ...prev, image: event.target.value }))}
                 />
               </label>
               <label className="text-sm text-slate-600">

@@ -130,6 +130,7 @@ const ManageScholarships = () => {
                                                         country: item.country || '',
                                                         tuitionFees: item.tuitionFees || '',
                                                         status: item.status || '',
+                                                        image: item.image || '',
                                                     });
                                                 }}
                                             >
@@ -183,6 +184,15 @@ const ManageScholarships = () => {
                                     className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-slate-700 focus:border-[#1B3C73] focus:outline-none"
                                     value={formData.universityName}
                                     onChange={(event) => setFormData((prev) => ({ ...prev, universityName: event.target.value }))}
+                                />
+                            </label>
+                            <label className="text-sm text-slate-600">
+                                Image URL
+                                <input
+                                    type="url"
+                                    className="mt-1 w-full rounded-2xl border border-slate-200 px-3 py-2 text-slate-700 focus:border-[#1B3C73] focus:outline-none"
+                                    value={formData.image || ''}
+                                    onChange={(event) => setFormData((prev) => ({ ...prev, image: event.target.value }))}
                                 />
                             </label>
                             <label className="text-sm text-slate-600">
