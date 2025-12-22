@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Layout from "../Layout/Layout";
 import DashboardLayout from "../Layout/DashboardLayout";
 import Home from "../Pages/Home";
+import SuccessStory from "../Pages/SuccessStory";
 import ErrorPage from "../Pages/ErrorPage";
 import Login from "../components/Login";
 import Register from "../components/Register";
@@ -47,6 +48,11 @@ const router = createBrowserRouter ([
             {
                 path: "/scholarships",
                 Component: Scholarships,
+
+            },
+            {
+                path: "/success-stories",
+                Component: SuccessStory,
 
             },
             {
