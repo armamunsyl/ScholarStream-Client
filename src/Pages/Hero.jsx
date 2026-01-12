@@ -12,7 +12,7 @@ const Hero = () => {
             initial="hidden"
             animate="visible"
             transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="bg-gradient-to-b from-[#1B3C73] to-[#23467C] text-white"
+            className="bg-gradient-to-b from-[#1B3C73] to-[#23467C] text-white dark:from-[#0b1120] dark:to-[#0f172a]"
         >
             <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-14 sm:py-20 md:flex-row md:items-center md:justify-between md:py-24 md:gap-12 lg:gap-16">
                 <motion.div className="w-full md:max-w-md lg:max-w-xl" variants={fadeInUp}>

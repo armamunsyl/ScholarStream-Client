@@ -9,6 +9,11 @@ import Register from "../components/Register";
 import Scholarships from "../Pages/Scholarships";
 import Faq from "../Pages/Faq";
 import ScholarshipDetails from "../Pages/ScholarshipDetails";
+import About from "../Pages/About";
+import Contact from "../Pages/Contact";
+import Blog from "../Pages/Blog";
+import HelpSupport from "../Pages/HelpSupport";
+import PrivacyTerms from "../Pages/PrivacyTerms";
 import DashboardOverview from "../Pages/Dashboard/DashboardOverview";
 import StudentApplications from "../Pages/Dashboard/StudentApplications";
 import StudentReviews from "../Pages/Dashboard/StudentReviews";
@@ -64,6 +69,26 @@ const router = createBrowserRouter ([
                 path: "/scholarship-details/:id",
                 Component: ScholarshipDetails,
 
+            },
+            {
+                path: "/about",
+                Component: About,
+            },
+            {
+                path: "/contact",
+                Component: Contact,
+            },
+            {
+                path: "/blog",
+                Component: Blog,
+            },
+            {
+                path: "/help-support",
+                Component: HelpSupport,
+            },
+            {
+                path: "/privacy-terms",
+                Component: PrivacyTerms,
             }
         ]
     },

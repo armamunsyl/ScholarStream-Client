@@ -2,9 +2,19 @@ import { useContext, useState, useRef, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { AuthContext } from "../Provider/AuthProvider";
 
+const getInitialTheme = () => {
+  if (typeof window === "undefined") return "light";
+  const stored = window.localStorage.getItem("theme");
+  if (stored === "dark" || stored === "light") {
+    return stored;
+  }
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+};
+
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => getInitialTheme() === "dark");
   const { user, logOut } = useContext(AuthContext);
   const profileRef = useRef(null);
 
@@ -21,6 +31,13 @@ const Navbar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const nextTheme = isDarkMode ? "dark" : "light";
+    document.documentElement.classList.toggle("dark", isDarkMode);
+    window.localStorage.setItem("theme", nextTheme);
+  }, [isDarkMode]);
+
   const handleLogout = async () => {
     await logOut();
     setProfileOpen(false);
@@ -28,7 +45,7 @@ const Navbar = () => {
   // console.log(user);
 
   return (
-    <div className="fixed top-0 left-0 z-50 w-full bg-[#1B3C73] shadow-[0_2px_6px_rgba(0,0,0,0.15)]">
+    <div className="fixed top-0 left-0 z-50 w-full bg-[#1B3C73] shadow-[0_2px_6px_rgba(0,0,0,0.15)] dark:bg-[#0b1120]">
       <div className="mx-auto flex max-w-6xl items-center gap-3 px-4 py-3 md:justify-between">
         <div className="flex flex-1 items-center gap-3 md:w-auto md:flex-none md:gap-6">
           <Link to="/" className="flex shrink-0 items-center gap-2">
@@ -58,7 +75,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        <ul className="hidden items-center gap-8 font-medium text-white/90 md:flex">
+        <ul className="hidden flex-wrap items-center gap-x-6 gap-y-2 font-medium text-white/90 md:flex">
           <li>
             <NavLink to="/" className={({ isActive }) =>
               isActive ? "text-white" : ""}>
@@ -86,6 +103,22 @@ const Navbar = () => {
               FAQ
             </NavLink>
           </li>
+          <li>
+            <a href="/#about" className="transition hover:text-white">
+              About
+            </a>
+          </li>
+          <li>
+            <a href="/#contact" className="transition hover:text-white">
+              Contact
+            </a>
+          </li>
+          <li>
+            <a href="/#blog" className="transition hover:text-white">
+              Blog
+            </a>
+          </li>
+         
         </ul>
 
         <div className="flex items-center gap-3 md:w-auto">
@@ -103,30 +136,52 @@ const Navbar = () => {
                 <span className="text-sm font-medium text-white/90">{user.displayName || 'Profile'}</span>
               </button>
               {profileOpen && (
-                <div className="absolute right-0 mt-2 w-48 rounded-2xl bg-white py-2 shadow-lg">
-                  <p className="px-4 py-2 text-xs font-semibold text-slate-500">
+                <div className="absolute right-0 mt-2 w-48 rounded-2xl bg-white py-2 shadow-lg dark:bg-[#0f172a]">
+                  <p className="px-4 py-2 text-xs font-semibold text-slate-500 dark:text-slate-400">
                     Signed in as
                     <br />
-                    <span className="text-slate-900">{user.email}</span>
+                    <span className="text-slate-900 dark:text-slate-100">{user.email}</span>
                   </p>
                   <Link
                     to="/dashboard"
                     onClick={() => setProfileOpen(false)}
-                    className="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                    className="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
                   >
                     Dashboard
                   </Link>
                   <Link
                     to="/dashboard/my-profile"
                     onClick={() => setProfileOpen(false)}
-                    className="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                    className="block px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
                   >
                     My Profile
                   </Link>
                   <button
                     type="button"
+                    role="switch"
+                    aria-checked={isDarkMode}
+                    onClick={() => setIsDarkMode((prev) => !prev)}
+                    className="flex w-full items-center justify-between px-4 py-2 text-left text-sm font-medium text-slate-700 hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-slate-800"
+                  >
+                    <span>Dark mode</span>
+                    <span
+                      className={`relative inline-flex h-5 w-9 items-center rounded-full transition ${
+                        isDarkMode ? "bg-slate-200 dark:bg-white" : "bg-slate-200 dark:bg-slate-700"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full transition ${
+                          isDarkMode
+                            ? "translate-x-4 bg-slate-900"
+                            : "translate-x-1 bg-white dark:bg-slate-200"
+                        }`}
+                      />
+                    </span>
+                  </button>
+                  <button
+                    type="button"
                     onClick={handleLogout}
-                    className="w-full px-4 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50"
+                    className="w-full px-4 py-2 text-left text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
                   >
                     Log out
                   </button>
@@ -136,7 +191,7 @@ const Navbar = () => {
           ) : (
             <Link
               to="/login"
-              className="hidden rounded-md bg-[#23467C] px-4 py-2 text-white hover:bg-[#2d4f88] md:inline-block"
+              className="hidden rounded-md bg-[#23467C] px-4 py-2 text-white hover:bg-[#2d4f88] dark:bg-slate-800 dark:hover:bg-slate-700 md:inline-block"
             >
               Log In
             </Link>
@@ -164,29 +219,81 @@ const Navbar = () => {
         </div>
       </div>
       {menuOpen && (
-        <div className="md:hidden border-t border-white/15 bg-[#152f5d]/95 backdrop-blur">
-          <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 text-white">
-            <nav className="flex flex-col gap-3 text-sm font-medium">
+        <div className="fixed inset-0 z-50 md:hidden">
+          <button
+            type="button"
+            aria-label="Close menu"
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setMenuOpen(false)}
+          />
+          <div className="absolute right-0 top-0 h-[calc(100vh-72px)] w-[85%] max-w-sm overflow-y-auto bg-[#152f5d] px-4 py-5 pb-8 text-white shadow-2xl dark:bg-[#0f172a]">
+            <div className="flex items-center justify-between pb-4">
+              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/60">Menu</p>
+              <button
+                type="button"
+                className="rounded-full border border-white/20 p-2 text-white"
+                onClick={() => setMenuOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+            <nav className="flex flex-col gap-2 text-sm font-medium">
               {[
                 { to: '/', label: 'Home' },
                 { to: '/scholarships', label: 'All Scholarships' },
                 { to: '/success-stories', label: 'Success Stories' },
-                { to: '/faq', label: 'FAQ' }
-              ].map((link) => (
-                <NavLink
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `rounded-full px-4 py-2 ${isActive ? 'bg-white/15 text-white' : 'text-white/80'}`
-                  }
-                >
-                  {link.label}
-                </NavLink>
-              ))}
+                { to: '/faq', label: 'FAQ' },
+                { to: '/#about', label: 'About' },
+                { to: '/#contact', label: 'Contact' },
+                { to: '/#blog', label: 'Blog' }
+              ].map((link) =>
+                link.to.startsWith('/#') ? (
+                  <a
+                    key={link.to}
+                    href={link.to}
+                    onClick={() => setMenuOpen(false)}
+                    className="rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-white/80 transition hover:bg-white/15 hover:text-white"
+                  >
+                    {link.label}
+                  </a>
+                ) : (
+                  <NavLink
+                    key={link.to}
+                    to={link.to}
+                    onClick={() => setMenuOpen(false)}
+                    className={({ isActive }) =>
+                      `rounded-2xl border border-white/10 px-4 py-2 transition ${
+                        isActive ? 'bg-white/15 text-white' : 'bg-white/5 text-white/80 hover:bg-white/15 hover:text-white'
+                      }`
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+                )
+              )}
             </nav>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={isDarkMode}
+              onClick={() => setIsDarkMode((prev) => !prev)}
+              className="mt-4 flex items-center justify-between rounded-2xl border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white"
+            >
+              <span>Dark mode</span>
+              <span
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition ${
+                  isDarkMode ? "bg-white" : "bg-slate-200 dark:bg-slate-700"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full transition ${
+                    isDarkMode ? "translate-x-4 bg-slate-900" : "translate-x-1 bg-white dark:bg-slate-200"
+                  }`}
+                />
+              </span>
+            </button>
             {user ? (
-              <div className="flex flex-col gap-2 rounded-2xl border border-white/30 bg-white/10 px-4 py-3 text-sm">
+              <div className="mt-4 flex flex-col gap-2 rounded-2xl border border-white/30 bg-white/10 px-4 py-3 text-sm">
                 <div className="flex items-center gap-3">
                   <img
                     src={user.photoURL || 'https://i.ibb.co/s1sDzpT/default-avatar.png'}
@@ -224,13 +331,13 @@ const Navbar = () => {
               <Link
                 to="/login"
                 onClick={() => setMenuOpen(false)}
-                className="rounded-full bg-[#23467C] px-4 py-2 text-center text-sm font-semibold text-white"
+                className="mt-4 rounded-full bg-[#23467C] px-4 py-2 text-center text-sm font-semibold text-white"
               >
                 Log In
               </Link>
             )}
-         </div>
-       </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -45,6 +45,14 @@ const Login = () => {
         }
     };
 
+    const handleAdminAutofill = () => {
+        setFormData({ email: 'Demo@gmail.com', password: 'Demo@gmail.com' });
+    };
+
+    const handleModeratorAutofill = () => {
+        setFormData({ email: 'moderator@gmail.com', password: 'moderator@gmail.com' });
+    };
+
     const isBusy = submitting || authLoading;
 
     return (
@@ -109,6 +117,38 @@ const Login = () => {
                             >
                                 {isBusy ? 'Please wait...' : 'Login'}
                             </button>
+                            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600">
+                                <p className="font-semibold text-slate-700">Need admin account?</p>
+                                <p className="mt-1">
+                                    Email: <span className="font-semibold">Demo@gmail.com</span>
+                                </p>
+                                <p>
+                                    Pass: <span className="font-semibold">Demo@gmail.com</span>
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={handleAdminAutofill}
+                                    className="mt-2 rounded-full bg-[#23467C] px-3 py-1 text-[11px] font-semibold text-white transition hover:bg-[#1b3ba0]"
+                                >
+                                    Click to autofill
+                                </button>
+                            </div>
+                            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600">
+                                <p className="font-semibold text-slate-700">Need moderator account?</p>
+                                <p className="mt-1">
+                                    Email: <span className="font-semibold">moderator@gmail.com</span>
+                                </p>
+                                <p>
+                                    Pass: <span className="font-semibold">moderator@gmail.com</span>
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={handleModeratorAutofill}
+                                    className="mt-2 rounded-full bg-[#23467C] px-3 py-1 text-[11px] font-semibold text-white transition hover:bg-[#1b3ba0]"
+                                >
+                                    Click to autofill
+                                </button>
+                            </div>
                             {status.error && <p className="text-sm text-red-500">{status.error}</p>}
                             {status.success && <p className="text-sm text-green-600">{status.success}</p>}
                         </form>

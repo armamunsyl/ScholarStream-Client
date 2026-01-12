@@ -32,10 +32,10 @@ const SuccessStory = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.7 }}
-            className="bg-white py-16"
+            className="bg-white py-16 dark:bg-[#0b1120]"
         >
             <div className="mx-auto max-w-6xl px-4">
-                <h2 className="text-3xl font-bold text-slate-900 sm:text-4xl">Success Stories</h2>
+                <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 sm:text-4xl">Success Stories</h2>
                 <div className="mt-10 grid gap-6 md:grid-cols-3">
                     {stories.map((story) => (
                         <motion.article
@@ -45,16 +45,16 @@ const SuccessStory = () => {
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: story.id * 0.05 }}
                             whileHover={{ translateY: -6, boxShadow: '0 20px 35px rgba(15,23,42,0.15)' }}
-                            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                            className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md dark:border-slate-800 dark:bg-[#0f172a]"
                         >
                             <div className="flex items-center gap-4">
                                 <img src={story.avatar} alt={story.name} className="h-14 w-14 rounded-full object-cover" />
                                 <div>
-                                    <p className="text-lg font-semibold text-slate-900">{story.name}</p>
-                                    <p className="text-sm text-[#1C4E94]">{story.country}</p>
+                                    <p className="text-lg font-semibold text-slate-900 dark:text-slate-100">{story.name}</p>
+                                    <p className="text-sm text-[#1C4E94] dark:text-sky-300">{story.country}</p>
                                 </div>
                             </div>
-                            <p className="mt-4 text-sm text-slate-600">{story.quote}</p>
+                            <p className="mt-4 text-sm text-slate-600 dark:text-slate-300">{story.quote}</p>
                             <div className="mt-5 flex gap-1 text-[#F5A524]">
                                 {Array.from({ length: 5 }).map((_, idx) => (
                                     <svg

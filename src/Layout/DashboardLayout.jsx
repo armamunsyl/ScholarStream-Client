@@ -40,7 +40,7 @@ const roleBadge = {
 
 const DashboardLayout = () => {
     const navigate = useNavigate();
-    const { authUser, profile, loading, error, logOut } = useDashboardUser();
+    const { authUser, profile, loading, error, logOut, refreshProfile } = useDashboardUser();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const normalizedRole = useMemo(() => profile?.role?.toLowerCase?.() ?? 'student', [profile?.role]);
@@ -151,7 +151,7 @@ const DashboardLayout = () => {
                                     {error}
                                 </div>
                             ) : (
-                                <Outlet context={{ profile: profile ?? {}, role: normalizedRole, authUser }} />
+                                <Outlet context={{ profile: profile ?? {}, role: normalizedRole, authUser, refreshProfile }} />
                             )}
                         </div>
                     </div>

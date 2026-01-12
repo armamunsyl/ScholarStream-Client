@@ -89,7 +89,7 @@ const Popular = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.7 }}
-            className="bg-gradient-to-b from-[#22467c] to-[#23467C] py-20 text-white"
+            className="bg-gradient-to-b from-[#22467c] to-[#23467C] py-20 text-white dark:from-[#0b1120] dark:to-[#0f172a]"
         >
             <div className="mx-auto max-w-6xl px-4">
                 <div className="mb-8">
@@ -124,7 +124,7 @@ const Popular = () => {
                             viewport={{ once: true }}
                             transition={{ duration: 0.5, delay: college.delay }}
                             whileHover={{ translateY: -6, boxShadow: '0 20px 30px rgba(0,0,0,0.2)' }}
-                            className="flex h-full flex-col overflow-hidden rounded-3xl bg-white text-slate-900 shadow-lg shadow-black/20"
+                            className="flex h-full flex-col overflow-hidden rounded-3xl bg-white text-slate-900 shadow-lg shadow-black/20 dark:bg-[#0f172a] dark:text-slate-100"
                         >
                             <div className="relative h-32 w-full sm:h-40 lg:h-48">
                                 <img
@@ -138,7 +138,7 @@ const Popular = () => {
                                 />
                             </div>
                             <div className="flex flex-1 flex-col p-6">
-                                <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 sm:text-lg">
+                                <div className="flex items-center gap-2 text-sm font-semibold text-slate-900 sm:text-lg dark:text-slate-100">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 24 24"
@@ -147,7 +147,7 @@ const Popular = () => {
                                         strokeWidth="1.8"
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
-                                        className="h-6 w-6 text-[#1C4E94]"
+                                        className="h-6 w-6 text-[#1C4E94] dark:text-sky-300"
                                     >
                                         <path d="M3 11.5 12 7l9 4.5-9 4.5-9-4.5Z" />
                                         <path d="M5 10v6.5a8 8 0 0 0 14 0V10" />
@@ -155,10 +155,10 @@ const Popular = () => {
                                     </svg>
                                     <h3 className="leading-tight">{college.scholarshipName || college.universityName}</h3>
                                 </div>
-                                <span className="mt-3 inline-flex items-center rounded-full border border-[#D6E8FF] px-3 py-1 text-[9px] font-semibold text-[#1C4E94] sm:px-4 sm:text-xs">
+                                <span className="mt-3 inline-flex items-center rounded-full border border-[#D6E8FF] px-3 py-1 text-[9px] font-semibold text-[#1C4E94] dark:border-slate-700 dark:text-sky-300 sm:px-4 sm:text-xs">
                                     {college.fundingLabel}
                                 </span>
-                                <ul className="mt-3 space-y-2 text-[11px] text-slate-600 sm:text-sm">
+                                <ul className="mt-3 space-y-2 text-[11px] text-slate-600 dark:text-slate-300 sm:text-sm">
                                     <li className="flex items-center gap-2">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
@@ -168,7 +168,7 @@ const Popular = () => {
                                             strokeWidth="2"
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
-                                            className="h-4 w-4 text-[#1C4E94]"
+                                            className="h-4 w-4 text-[#1C4E94] dark:text-sky-300"
                                         >
                                             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0Z" />
                                             <circle cx="12" cy="10" r="3" />
@@ -184,7 +184,7 @@ const Popular = () => {
                                             strokeWidth="2"
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
-                                            className="h-4 w-4 text-[#1C4E94]"
+                                            className="h-4 w-4 text-[#1C4E94] dark:text-sky-300"
                                         >
                                             <path d="m7 21 5-5 5 5" />
                                             <path d="m7 8 5-5 5 5" />
@@ -196,7 +196,7 @@ const Popular = () => {
                                 </ul>
 
                                 <div className="mt-auto flex flex-wrap items-center gap-2 pt-4 sm:flex-nowrap sm:justify-between">
-                                    <span className="text-lg font-bold text-slate-900 sm:text-2xl">{college.fee}</span>
+                                    <span className="text-lg font-bold text-slate-900 dark:text-slate-100 sm:text-2xl">{college.fee}</span>
                                     <Link
                                         to={`/scholarship-details/${college.id}`}
                                         state={{ scholarship: college.scholarship }}
